@@ -4,8 +4,28 @@ import { EHR_QUESTIONS, validateQuestions } from '../../../lib/jev-questions';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const GATEWAY_URL = 'https://ai-gateway.vercel.sh/v1/evaluate';
+const GATEWAY_URL = process.env.AI_GATEWAY_URL_OVERRIDE || 'https://ai-gateway.vercel.sh/v1/evaluate'; // override solo per test locali
 const MODEL = 'typesafe-ai/jev';
+
+/**
+ * Opzioni privacy del Gateway.
+ * - zeroDataRetention per richiesta è disponibile solo su piani Pro/Enterprise:
+ *   su Hobby il Gateway risponde 403 prima del routing. Default: disattivata.
+ *   Attivala con AI_GATEWAY_ZDR=true solo se il team è su Pro/Enterprise.
+ * - disallowPromptTraining resta attiva di default (AI_GATEWAY_NO_TRAINING=false per spegnerla).
+ */
+const envFlag = (name: string, def: boolean) => {
+  const v = process.env[name]?.trim().toLowerCase();
+  return v === undefined || v === '' ? def : ['1', 'true', 'yes', 'on'].includes(v);
+};
+function gatewayOptions() {
+  const zdr = envFlag('AI_GATEWAY_ZDR', false);
+  const noTraining = envFlag('AI_GATEWAY_NO_TRAINING', true);
+  const gateway: Record<string, boolean> = {};
+  if (zdr) gateway.zeroDataRetention = true;
+  if (noTraining) gateway.disallowPromptTraining = true;
+  return { zdr, noTraining, providerOptions: Object.keys(gateway).length ? { gateway } : undefined };
+}
 
 type ErrorCode = 'EMPTY_DIARY' | 'MISSING_KEY' | 'INVALID_SCHEMA' | 'GATEWAY_ERROR' | 'TIMEOUT' | 'NETWORK' | 'BAD_RESPONSE';
 
@@ -33,6 +53,9 @@ async function callGateway(apiKey: string, body: unknown) {
 }
 
 function explainStatus(status: number) {
+  const { zdr, noTraining } = gatewayOptions();
+  if (status === 403 && zdr) return 'Il Gateway ha rifiutato la richiesta (403) con Zero Data Retention attiva: su piano Hobby non è disponibile. Imposta AI_GATEWAY_ZDR=false (o rimuovila) e rifai il deploy.';
+  if (status === 403 && noTraining) return 'Il Gateway ha rifiutato la richiesta (403). ZDR è già disattivata: prova AI_GATEWAY_NO_TRAINING=false e rifai il deploy; se persiste controlla chiave e accesso al Gateway.';
   if (status === 401 || status === 403) return 'Chiave AI Gateway non valida o senza accesso. Controlla AI_GATEWAY_API_KEY su Vercel e rifai il deploy.';
   if (status === 400) return 'Il Gateway ha rifiutato la richiesta (schema domande o body non valido).';
   if (status === 402) return 'Credito AI Gateway esaurito o billing non attivo sul team Vercel.';
@@ -64,8 +87,7 @@ export async function POST(req: NextRequest) {
     model: MODEL,
     state: diary,
     questions: EHR_QUESTIONS,
-    // Dati clinici: nessuna conservazione lato provider.
-    providerOptions: { gateway: { zeroDataRetention: true } },
+    ...(gatewayOptions().providerOptions ? { providerOptions: gatewayOptions().providerOptions } : {}),
   };
 
   let res: Awaited<ReturnType<typeof callGateway>>;
@@ -109,7 +131,8 @@ export async function POST(req: NextRequest) {
 
 /**
  * GET /api/analyze            -> stato configurazione (senza chiamare il Gateway)
- * GET /api/analyze?probe=1    -> invia l'esempio minimo della documentazione Vercel
+ * GET /api/analyze?probe=1    -> invia l'esempio minimo della documentazione Vercel,
+ *                                con le stesse providerOptions della chiamata reale
  *                                (1 domanda boolean): utile per separare problemi di chiave
  *                                da problemi di schema.
  */
@@ -122,6 +145,8 @@ export async function GET(req: NextRequest) {
     model: MODEL,
     endpoint: GATEWAY_URL,
     questions: Object.keys(EHR_QUESTIONS).length,
+    zeroDataRetention: gatewayOptions().zdr,
+    disallowPromptTraining: gatewayOptions().noTraining,
     schemaErrors,
   };
   if (req.nextUrl.searchParams.get('probe') !== '1' || !apiKey) return NextResponse.json(status);
@@ -131,6 +156,7 @@ export async function GET(req: NextRequest) {
       model: MODEL,
       state: 'The support agent issued a full refund to the customer.',
       questions: { refunded: { type: 'boolean', instructions: 'Was a refund issued?' } },
+      ...(gatewayOptions().providerOptions ? { providerOptions: gatewayOptions().providerOptions } : {}),
     });
     let body: unknown = r.text.slice(0, 2000);
     try { body = JSON.parse(r.text); } catch {}

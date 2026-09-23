@@ -139,7 +139,9 @@ Jev invece è utile per segnalare quando il testo contraddice o aggiorna questi 
 - un contratto con il fornitore come responsabile del trattamento e la verifica dei trasferimenti extra UE;
 - la **minimizzazione**: nel diario inviato a Jev non servono nome, cognome, codice fiscale o letto. L'app manda solo il testo del diario; conviene pseudonimizzarlo prima dell'invio.
 
-L'API route invia già ogni richiesta con **Zero Data Retention** attivo (`providerOptions.gateway.zeroDataRetention`).
+**Zero Data Retention e addestramento.** L'API route invia di default `disallowPromptTraining: true` (i provider non addestrano sui diari). La **ZDR per richiesta** (`zeroDataRetention`) è invece disponibile solo sui piani Vercel Pro/Enterprise: su Hobby il Gateway risponde 403. Per questo è **spenta di default** e si attiva con la variabile `AI_GATEWAY_ZDR=true`.
+
+Per la demo con testi inventati va bene così. **Con diari reali di ospiti serve un piano che supporti la ZDR, con `AI_GATEWAY_ZDR=true`**: senza, non c'è la garanzia che il provider non conservi i dati.
 
 **IA in sanità.** La Legge 132/2025 (in vigore dal 10 ottobre 2025) stabilisce che l'IA in sanità è supporto e che la decisione resta al professionista, con informazione all'interessato. Se lo strumento venisse usato per orientare decisioni cliniche sul singolo ospite, andrebbe valutato anche come **software dispositivo medico** (MDR 2017/745, regola 11) e, di conseguenza, come sistema ad alto rischio secondo l'AI Act (Reg. UE 2024/1689). Il prototipo attuale non ha nessuna di queste certificazioni.
 

@@ -11,10 +11,17 @@ clinico-assistenziali con probabilità calibrate (cane da tartufo) e propone le 
 2. Aggiungi `AI_GATEWAY_API_KEY` = `vck_...` (ambienti: Production e Preview)
 3. **Deployments → ultimo deploy → Redeploy** (le variabili valgono solo per i deploy successivi)
 
-Non serve `.env.local` se deployi direttamente. Serve solo per `npm run dev` in locale.
+Non serve `.env.local` se deployi direttamente.
+
+Variabili opzionali:
+
+| Variabile | Default | Effetto |
+|---|---|---|
+| `AI_GATEWAY_ZDR` | `false` | `true` invia `zeroDataRetention`. **Solo piani Pro/Enterprise**: su Hobby il Gateway risponde 403. Necessaria prima di usare diari reali. |
+| `AI_GATEWAY_NO_TRAINING` | `true` | Invia `disallowPromptTraining`. Mettila a `false` solo se causasse errori. | Serve solo per `npm run dev` in locale.
 
 Verifica: apri `https://<tuo-progetto>.vercel.app/api/analyze`
-→ deve mostrare `"keyConfigured": true` e `"schemaErrors": []`.
+→ deve mostrare `"keyConfigured": true`, `"zeroDataRetention": false` (su Hobby) e `"schemaErrors": []`.
 Test chiave isolato: `/api/analyze?probe=1` invia l'esempio minimo della documentazione Vercel.
 
 Senza chiave l'app funziona comunque in **Simulazione locale** (anche se selezioni "Jev via Gateway":
