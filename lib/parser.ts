@@ -54,12 +54,13 @@ function firstMatch(text: string, res: RegExp[], min: number, max: number, group
   return null;
 }
 
-const NEG = /\b(non|nessun[ao]?|no|nega|negat[oa]|senza|assenza di|esclus[ao])\b[^.;\n]{0,18}$/i;
+// La negazione vale solo nella stessa frase/inciso: si ferma a . ; , e a capo.
+const NEG = /\b(non|nessun[ao]?|no|nega|negat[oa]|senza|assenza di|esclus[ao])\b[^.;,\n]{0,18}$/i;
 const RISK = /\b(rischio|prevenzione|scala|conley|morse)\b[^.;\n]{0,14}$/i;
 
 /** Trova la prima occorrenza non negata. */
-function findAffirmed(text: string, re: RegExp): { hit: Span | null; negated: Span | null } {
-  const g = new RegExp(re.source, 'gi');
+export function findAffirmed(text: string, re: RegExp): { hit: Span | null; negated: Span | null } {
+  const g = new RegExp(re.source, 'gi' + (re.flags.includes('u') ? 'u' : ''));
   let m: RegExpExecArray | null;
   let negated: Span | null = null;
   while ((m = g.exec(text))) {
@@ -114,7 +115,7 @@ export function parseDiary(raw: string): ParsedDiary {
   const temperatura = firstMatch(
     text,
     [
-      /\b(?:temperatura(?:\s+corporea)?|temp\.?|TC|T\.C\.|febbre|febbricola|piressia|iperpiressia)\b[^\d\n]{0,14}(\d{2}(?:[.,]\d{1,2})?)/i,
+      /\b(?:temperatura(?:\s+corporea)?|temp\.?|TC|T\.C\.|febbre|febbricola|piressia|iperpiressia|apiretic[oa])\b[^\d\n]{0,14}(\d{2}(?:[.,]\d{1,2})?)/i,
       /(\d{2}(?:[.,]\d{1,2})?)\s*(?:°\s*C?|gradi)/i,
     ],
     32,
@@ -127,16 +128,20 @@ export function parseDiary(raw: string): ParsedDiary {
   }
 
   // ---- Pressione arteriosa
+  // Accetta "135/90", "135 su 90", "135-90", "135 e 90", "90 135", "90/135": sistolica = max, diastolica = min.
+  // Il separatore è limitato (/, su, -, virgola o spazi) per non unire "PA 135, FC 88" in 135/88.
   let pa: ParsedDiary['pa'] = null;
   for (const re of [
-    /\b(?:PA|P\.A\.|pressione(?:\s+arteriosa)?)\b[^\d\n]{0,14}(\d{2,3})\s*(?:\/|su|-)\s*(\d{2,3})/i,
+    /\b(?:PA|P\.A\.|pressione(?:\s+arteriosa)?)\b[^\d\n]{0,14}(\d{2,3})\s*(?:\/|\\|su|-|,|e)?\s*(\d{2,3})\b/i,
     /(\d{2,3})\s*\/\s*(\d{2,3})\s*mm\s*hg/i,
   ]) {
     const m = re.exec(text);
     if (m) {
-      const s = parseInt(m[1], 10);
-      const d = parseInt(m[2], 10);
-      if (s >= 50 && s <= 280 && d >= 20 && d <= 180 && s > d) { pa = { s, d, span: mk(text, m) }; break; }
+      const a = parseInt(m[1], 10);
+      const b = parseInt(m[2], 10);
+      const s = Math.max(a, b);
+      const d = Math.min(a, b);
+      if (s >= 50 && s <= 280 && d >= 20 && d <= 180 && s !== d) { pa = { s, d, span: mk(text, m) }; break; }
     }
   }
 
@@ -177,7 +182,7 @@ export function parseDiary(raw: string): ParsedDiary {
     0,
     10,
   );
-  const doloreNeg = /\b(?:nega\s+dolore|dolore\s+(?:assente|negato)|non\s+(?:riferisce|lamenta)\s+dolor\w*|nessun\s+dolore)\b/i.exec(text);
+  const doloreNeg = /\b(?:nega\s+dolore|dolore\s+(?:assente|negato)|non\s+(?:riferisce|lamenta)\s+dolor\w*|nessun\s+dolore|senza\s+dolore)\b/i.exec(text);
   const doloreNegato = doloreNeg ? mk(text, doloreNeg) : null;
   const dtor = /\b(?:dolore\s+(?:toracico|retrosternale|al\s+petto)|oppressione\s+(?:toracica|retrosternale)|toracalgia)\b/i.exec(text);
   const doloreToracico = dtor ? mk(text, dtor) : null;
@@ -271,7 +276,7 @@ export function bandTemp(t: number) {
 export function bandPA(s: number, d: number) {
   if (s >= 180 || d >= 110) return 'ipertensione_severa';
   if (s >= 140 || d >= 90) return 'ipertensione';
-  if (s < 90 || d < 60) return 'ipotensione';
+  if (s <= 90 || d <= 60) return 'ipotensione';
   return 'normale';
 }
 export function bandFC(f: number) {

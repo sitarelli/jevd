@@ -1,0 +1,1206 @@
+[
+  {
+    "id": "quadro_stabile",
+    "label": "Quadro clinico stabile",
+    "category": "Sintesi",
+    "tier": "sintesi",
+    "question": "Nel complesso l'ospite appare clinicamente stabile in questo momento, senza segni o eventi che richiedano una rivalutazione?",
+    "criteria": {
+      "true": "Parametri e comportamento tranquilli, nessun sintomo, segno o evento che richieda rivalutazione.",
+      "false": "Presenti sintomi, segni o eventi da rivalutare: malessere, confusione, dolore importante, caduta, instabilità."
+    },
+    "keywords": [
+      "tranquill*",
+      "collabora*",
+      "stabile",
+      "nulla da segnalare",
+      "riposa"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "-",
+    "ministry_indicator": "-",
+    "literature": "-",
+    "trigger": "Nessuno: usato per il banner di stabilità",
+    "scheda": null,
+    "actions": []
+  },
+  {
+    "id": "caduta",
+    "label": "Caduta",
+    "category": "Sicurezza",
+    "tier": "evento",
+    "question": "Il diario riporta che l'ospite è caduto, scivolato o è stato trovato a terra nelle ultime 24 ore?",
+    "criteria": {
+      "true": "Una caduta è avvenuta nelle ultime 24 ore, anche non testimoniata (trovato a terra) o che l'ospite non ricorda.",
+      "false": "Nessuna caduta, caduta negata o esclusa, oppure si parla solo di rischio o prevenzione cadute."
+    },
+    "keywords": [
+      "caduta",
+      "caduto",
+      "cade",
+      "scivolat*",
+      "inciampat*",
+      "trovat* a terra",
+      "rinvenut* a terra",
+      "sul pavimento"
+    ],
+    "threshold_yellow": 0.6,
+    "threshold_red": 0.85,
+    "scale": "Conley (rischio); scheda evento caduta",
+    "ministry_indicator": "Raccomandazione Min. Salute n. 13/2011; evento sentinella solo se morte o grave danno (SIMES)",
+    "literature": "Raccomandazione n. 13; World Guidelines for Falls Prevention 2022; NICE CG161",
+    "trigger": "Apri scheda evento caduta",
+    "scheda": "cadute",
+    "actions": [
+      "Controlla parametri e traumi",
+      "Rivaluta rischio cadute (Conley)",
+      "Informa medico e familiari"
+    ],
+    "mock": {
+      "p1": 0.89,
+      "p2": 0.89,
+      "p3": 0.9
+    }
+  },
+  {
+    "id": "sospetta_frattura",
+    "label": "Sospetta frattura di femore",
+    "category": "Sicurezza",
+    "tier": "urgente",
+    "question": "Dopo una caduta l'ospite presenta segni di possibile frattura: non carica l'arto, dolore forte all'anca, arto accorciato o extraruotato, deformità?",
+    "criteria": {
+      "true": "Uno o più segni di frattura dopo trauma: impossibilità a caricare, dolore intenso all'anca o all'inguine, accorciamento, extrarotazione, deformità.",
+      "false": "Nessun segno di frattura: deambula, carica, nessun dolore importante, oppure non c'è stato trauma."
+    },
+    "keywords": [
+      "non carica",
+      "accorciament*",
+      "extraruotat*",
+      "extrarotat*",
+      "deformit*",
+      "dolore forte anca",
+      "dolore intenso anca",
+      "non muove la gamba"
+    ],
+    "threshold_yellow": 0.5,
+    "threshold_red": 0.8,
+    "scale": "Valutazione clinica; RX bacino e femore",
+    "ministry_indicator": "Esito di caduta: grave danno da segnalare (Raccomandazione n. 13)",
+    "literature": "NICE CG124 Hip fracture; linee guida SIOT/SIGG frattura di femore nell'anziano",
+    "trigger": "Allarme rosso: non mobilizzare, avvisa il medico, valuta RX",
+    "scheda": "cadute",
+    "actions": [
+      "Non mobilizzare l'ospite",
+      "Avvisa subito il medico",
+      "Controlla dolore e parametri"
+    ]
+  },
+  {
+    "id": "trauma_cranico",
+    "label": "Trauma cranico dopo caduta",
+    "category": "Sicurezza",
+    "tier": "urgente",
+    "question": "Il diario suggerisce un trauma cranico: colpo alla testa, ferita o ematoma al capo, oppure caduta non testimoniata che l'ospite non ricorda?",
+    "criteria": {
+      "true": "Colpo o ferita alla testa, ematoma al capo, vomito o sonnolenza dopo caduta, amnesia dell'evento.",
+      "false": "Nessun coinvolgimento della testa o nessuna caduta."
+    },
+    "keywords": [
+      "trauma cranico",
+      "batte la testa",
+      "battuto la testa",
+      "colpo alla testa",
+      "ematoma frontale",
+      "ferita al capo",
+      "ferita alla testa",
+      "non ricorda"
+    ],
+    "threshold_yellow": 0.5,
+    "threshold_red": 0.8,
+    "scale": "GCS; criteri NICE per TC encefalo",
+    "ministry_indicator": "Esito di caduta (Raccomandazione n. 13)",
+    "literature": "NICE NG232 Head injury (2023): TC se anticoagulato o con amnesia/vomito/GCS ridotto",
+    "trigger": "Avvisa il medico: se in terapia anticoagulante valuta invio per TC",
+    "scheda": "cadute",
+    "actions": [
+      "Verifica terapia anticoagulante/antiaggregante",
+      "Monitora coscienza (GCS) nelle prossime ore",
+      "Avvisa il medico"
+    ]
+  },
+  {
+    "id": "contenzione",
+    "label": "Contenzione fisica in atto",
+    "category": "Sicurezza",
+    "tier": "evento",
+    "question": "Il diario indica che è stata applicata o è in atto una contenzione fisica (spondine bilaterali, cintura, fascia, tavolino bloccato)?",
+    "criteria": {
+      "true": "Contenzione applicata o in atto: spondine alzate, cintura pelvica o addominale, fasce, tavolino che impedisce di alzarsi.",
+      "false": "Nessuna contenzione, contenzione rimossa, oppure si parla solo di ausili che l'ospite può togliere da solo."
+    },
+    "keywords": [
+      "contenzion*",
+      "spondine",
+      "sponde alzate",
+      "cintura pelvica",
+      "cintura addominale",
+      "fascia di contenzione",
+      "tavolino bloccato",
+      "contenut* a letto",
+      "contenut* in carrozzina"
+    ],
+    "threshold_yellow": 0.5,
+    "threshold_red": 0.8,
+    "scale": "Registro contenzioni; prescrizione medica e rivalutazione periodica",
+    "ministry_indicator": "Indicatore contenzione fisica (progetto CCM 2010 e sistemi regionali di accreditamento)",
+    "literature": "Comitato Nazionale per la Bioetica, La contenzione: problemi bioetici (2015); linee di indirizzo regionali",
+    "trigger": "Apri scheda contenzione: prescrizione, motivazione, durata, rivalutazione",
+    "scheda": "contenzione",
+    "actions": [
+      "Verifica prescrizione e motivazione",
+      "Registra orario di inizio e controlli",
+      "Valuta alternative alla contenzione"
+    ]
+  },
+  {
+    "id": "lesione_pressione",
+    "label": "Lesione da pressione",
+    "category": "Cute e lesioni",
+    "tier": "evento",
+    "question": "È descritta una lesione da pressione (arrossamento non sbiancante, piaga, decubito, fibrina, escara)?",
+    "criteria": {
+      "true": "Lesione da pressione nuova o già nota: eritema non sbiancante, flittene, piaga, fibrina, escara, in sedi di appoggio.",
+      "false": "Cute integra, arrossamento che sbianca alla pressione, oppure nessuna lesione descritta."
+    },
+    "keywords": [
+      "lesione da pressione",
+      "lesioni da pressione",
+      "ldp",
+      "piaga",
+      "piaghe",
+      "decubit*",
+      "non sbiancante",
+      "fibrina",
+      "escara",
+      "flittene"
+    ],
+    "threshold_yellow": 0.6,
+    "threshold_red": 0.85,
+    "scale": "Braden (rischio); classificazione NPIAP/EPUAP",
+    "ministry_indicator": "Prevalenza e incidenza LDP (progetto CCM 2010, indicatori regionali)",
+    "literature": "EPUAP/NPIAP/PPPIA International Guideline 2019",
+    "trigger": "Apri scheda lesioni",
+    "scheda": "lesioni",
+    "actions": [
+      "Stadia e fotografa la lesione",
+      "Rivaluta Braden e ausili antidecubito"
+    ],
+    "mock": {
+      "p1": 0.88,
+      "p2": 0.92,
+      "p3": 0.94
+    }
+  },
+  {
+    "id": "lesione_traumatica",
+    "label": "Lesione traumatica / skin tear",
+    "category": "Cute e lesioni",
+    "tier": "evento",
+    "question": "È descritta una lesione cutanea traumatica (escoriazione, lacerazione da strappo, ematoma, ecchimosi)?",
+    "criteria": {
+      "true": "Escoriazione, skin tear, lacerazione, ematoma o ecchimosi presenti.",
+      "false": "Nessuna lesione traumatica descritta."
+    },
+    "keywords": [
+      "escoriazion*",
+      "abrasion*",
+      "skin tear",
+      "lesione da strappo",
+      "lacerazion*",
+      "ecchimos*",
+      "ematoma",
+      "graffi*"
+    ],
+    "threshold_yellow": 0.6,
+    "threshold_red": 0.85,
+    "scale": "Classificazione ISTAP",
+    "ministry_indicator": "Integrità cutanea; esito di caduta",
+    "literature": "International Skin Tear Advisory Panel (ISTAP) 2018",
+    "trigger": "Apri scheda lesioni. Ecchimosi non spiegate: segnala al coordinatore",
+    "scheda": "lesioni",
+    "actions": [
+      "Medica e documenta la lesione",
+      "Se sede o forma non spiegate: segnala al coordinatore"
+    ],
+    "mock": {
+      "p1": 0.85,
+      "p2": 0.88,
+      "p3": 0.9
+    }
+  },
+  {
+    "id": "introito_ridotto",
+    "label": "Introito alimentare ridotto",
+    "category": "Nutrizione e idratazione",
+    "tier": "monitoraggio",
+    "question": "L'ospite mangia meno del solito o rifiuta il cibo (meno di metà pasto, salta i pasti, inappetenza)?",
+    "criteria": {
+      "true": "Consuma meno di metà dei pasti, rifiuta il cibo, inappetenza riferita.",
+      "false": "Alimentazione regolare o non menzionata."
+    },
+    "keywords": [
+      "mangia poco",
+      "rifiuta il cibo",
+      "rifiuta il pasto",
+      "rifiuta i pasti",
+      "inappetenz*",
+      "non mangia",
+      "mezzo pasto",
+      "lascia il pasto"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "MNA-SF / MUST; diario alimentare",
+    "ministry_indicator": "Rischio malnutrizione (progetto CCM 2010)",
+    "literature": "ESPEN guideline on clinical nutrition in geriatrics 2022; MNA",
+    "trigger": "Apri scheda nutrizionale",
+    "scheda": "nutrizionale",
+    "actions": [
+      "Avvia diario alimentare di 3 giorni",
+      "Pesa l'ospite"
+    ]
+  },
+  {
+    "id": "calo_peso",
+    "label": "Calo di peso",
+    "category": "Nutrizione e idratazione",
+    "tier": "monitoraggio",
+    "question": "Il diario riporta un calo di peso non intenzionale?",
+    "criteria": {
+      "true": "Perdita di peso riferita o misurata, dimagrimento, abiti larghi.",
+      "false": "Peso stabile o non menzionato."
+    },
+    "keywords": [
+      "calo di peso",
+      "calo ponderale",
+      "perso * kg",
+      "ha perso peso",
+      "dimagrit*",
+      "perdita di peso",
+      "cachessi*"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "MNA-SF / MUST (>5% in 3 mesi)",
+    "ministry_indicator": "Calo ponderale non programmato",
+    "literature": "ESPEN 2022; GLIM criteria",
+    "trigger": "Apri scheda nutrizionale",
+    "scheda": "nutrizionale",
+    "actions": [
+      "Calcola % di calo e MNA-SF",
+      "Informa medico e dietista"
+    ]
+  },
+  {
+    "id": "disidratazione",
+    "label": "Rischio disidratazione",
+    "category": "Nutrizione e idratazione",
+    "tier": "monitoraggio",
+    "question": "L'ospite beve poco o presenta segni di disidratazione (mucose secche, urine scarse o concentrate)?",
+    "criteria": {
+      "true": "Beve poco, mucose secche, oliguria, urine concentrate, sete.",
+      "false": "Idratazione adeguata o non menzionata."
+    },
+    "keywords": [
+      "beve poco",
+      "non beve",
+      "disidratat*",
+      "mucose secche",
+      "lingua secca",
+      "oliguri*",
+      "urine scarse",
+      "urine concentrate"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "Bilancio idrico",
+    "ministry_indicator": "Idratazione (protocolli richiesti dall'accreditamento regionale)",
+    "literature": "ESPEN guideline on nutrition and hydration in geriatrics 2022",
+    "trigger": "Avvia bilancio idrico, informa il medico",
+    "scheda": "nutrizionale",
+    "actions": [
+      "Avvia bilancio idrico",
+      "Offri liquidi a orari fissi"
+    ]
+  },
+  {
+    "id": "disfagia",
+    "label": "Disfagia / rischio aspirazione",
+    "category": "Nutrizione e idratazione",
+    "tier": "urgente",
+    "question": "L'ospite tossisce o si strozza durante i pasti o presenta difficoltà a deglutire?",
+    "criteria": {
+      "true": "Tosse o voce gorgogliante durante o dopo i pasti, ristagno di cibo in bocca, difficoltà a deglutire.",
+      "false": "Deglutizione normale o non menzionata."
+    },
+    "keywords": [
+      "disfagi*",
+      "tossisce durante i pasti",
+      "tosse ai pasti",
+      "tosse durante il pasto",
+      "si strozza",
+      "ristagno",
+      "ab ingestis",
+      "fatica a deglutire",
+      "voce gorgogliante"
+    ],
+    "threshold_yellow": 0.5,
+    "threshold_red": 0.8,
+    "scale": "Test dell'acqua / GUSS; valutazione logopedica",
+    "ministry_indicator": "Prevenzione polmonite ab ingestis",
+    "literature": "ESPEN guideline dysphagia 2018; Raccomandazione n. 19 (manipolazione forme orali solide)",
+    "trigger": "Sospendi alimentazione per bocca fino a valutazione, logopedista",
+    "scheda": "nutrizionale",
+    "actions": [
+      "Sospendi cibo e liquidi per bocca fino a valutazione",
+      "Richiedi valutazione logopedica",
+      "Farmaci: frantumazione solo se consentita (Racc. n. 19)"
+    ]
+  },
+  {
+    "id": "febbre_attuale",
+    "label": "Febbre in atto",
+    "category": "Deterioramento e infezioni",
+    "tier": "monitoraggio",
+    "question": "L'ospite ha febbre ADESSO (temperatura attuale 38 °C o più)?",
+    "criteria": {
+      "true": "Temperatura attuale 38 °C o superiore, oppure descritto come febbrile ora.",
+      "false": "Attualmente apiretico, febbre negata, oppure la febbre riportata si riferisce a ieri o a giorni precedenti."
+    },
+    "keywords": [
+      "febbr*",
+      "piressi*",
+      "iperpiressi*"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "NEWS2 (voce temperatura)",
+    "ministry_indicator": "Sorveglianza infezioni correlate all'assistenza (PNCAR)",
+    "literature": "McGeer revisionati (Stone 2012); NEWS2 RCP 2017",
+    "trigger": "Calcola NEWS2, cerca il focolaio",
+    "scheda": "news",
+    "actions": [
+      "Calcola NEWS2",
+      "Cerca il focolaio (urine, respiro, cute)"
+    ]
+  },
+  {
+    "id": "febbre_pregressa",
+    "label": "Febbre pregressa",
+    "category": "Deterioramento e infezioni",
+    "tier": "info",
+    "question": "Il diario riporta febbre in un momento PRECEDENTE (ieri, stanotte, giorni fa), non attuale?",
+    "criteria": {
+      "true": "Febbre riferita al passato: ieri, la notte scorsa, giorni fa.",
+      "false": "Nessuna febbre passata riportata."
+    },
+    "keywords": [
+      "ieri * febbre",
+      "aveva febbre",
+      "aveva la febbre",
+      "febbre ieri",
+      "stanotte febbre"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "-",
+    "ministry_indicator": "-",
+    "literature": "-",
+    "trigger": "Nessuno: spiega perché la febbre attuale è bassa",
+    "scheda": null,
+    "actions": []
+  },
+  {
+    "id": "presincope",
+    "label": "Ipotensione sintomatica / presincope",
+    "category": "Deterioramento e infezioni",
+    "tier": "urgente",
+    "question": "L'ospite ha ORA sintomi di presincope (pallore, sudorazione, sensazione di svenimento), anche con pressione apparentemente normale?",
+    "criteria": {
+      "true": "Pallore, sudorazione, sensazione di svenire, capogiro, lipotimia riferiti adesso.",
+      "false": "Nessun sintomo di presincope attuale."
+    },
+    "keywords": [
+      "pallid*",
+      "pallore",
+      "sudat*",
+      "sudorazion*",
+      "svenire",
+      "svenimento",
+      "lipotimi*",
+      "capogir*",
+      "mancamento"
+    ],
+    "threshold_yellow": 0.5,
+    "threshold_red": 0.8,
+    "scale": "NEWS2; PA in clino e ortostatismo",
+    "ministry_indicator": "Deterioramento clinico",
+    "literature": "NEWS2 RCP 2017; ESC Syncope guidelines 2018",
+    "trigger": "Rivaluta subito PA e FC, avvisa il medico",
+    "scheda": "news",
+    "actions": [
+      "Metti a letto l'ospite",
+      "Rivaluta PA e FC, anche in ortostatismo",
+      "Controlla glicemia",
+      "Avvisa il medico"
+    ]
+  },
+  {
+    "id": "deterioramento_sepsi",
+    "label": "Deterioramento precoce / possibile sepsi",
+    "category": "Deterioramento e infezioni",
+    "tier": "urgente",
+    "question": "Il diario descrive più segni di peggioramento insieme (tachicardia, pressione bassa, febbre, saturazione ridotta, malessere) compatibili con sepsi o instabilità?",
+    "criteria": {
+      "true": "Due o più segni insieme: FC sopra 100, PA sistolica 100 o meno, temperatura alterata, SpO2 bassa, pallore o sudorazione.",
+      "false": "Parametri e sintomi non indicano peggioramento generale."
+    },
+    "keywords": [
+      "peggiorat*",
+      "sta peggiorando",
+      "sepsi",
+      "settic*"
+    ],
+    "threshold_yellow": 0.5,
+    "threshold_red": 0.75,
+    "scale": "NEWS2; qSOFA",
+    "ministry_indicator": "Ospedalizzazioni evitabili; sorveglianza ICA",
+    "literature": "NEWS2 RCP 2017; Surviving Sepsis Campaign 2021; INTERACT",
+    "trigger": "Allarme rosso early warning: NEWS2 completo e medico subito",
+    "scheda": "news",
+    "actions": [
+      "Calcola NEWS2 completo (FR, coscienza, O2)",
+      "Avvisa subito il medico",
+      "Valuta protocollo sepsi"
+    ]
+  },
+  {
+    "id": "dispnea",
+    "label": "Dispnea",
+    "category": "Deterioramento e infezioni",
+    "tier": "urgente",
+    "question": "L'ospite ha ORA difficoltà respiratoria (dispnea, affanno, fame d'aria, respiro rapido)?",
+    "criteria": {
+      "true": "Dispnea, affanno, fame d'aria, ortopnea, respiro frequente in atto.",
+      "false": "Respiro normale, dispnea negata o non menzionata."
+    },
+    "keywords": [
+      "dispnea",
+      "dispnoic*",
+      "affann*",
+      "fame d'aria",
+      "ortopnoic*",
+      "tachipnoic*",
+      "respiro corto"
+    ],
+    "threshold_yellow": 0.5,
+    "threshold_red": 0.8,
+    "scale": "NEWS2 (FR, SpO2)",
+    "ministry_indicator": "Deterioramento clinico",
+    "literature": "NEWS2 RCP 2017",
+    "trigger": "Controlla SpO2 e FR, NEWS2",
+    "scheda": "news",
+    "actions": [
+      "Controlla SpO2 e frequenza respiratoria",
+      "Posizione semiseduta",
+      "Avvisa il medico"
+    ]
+  },
+  {
+    "id": "dolore_toracico",
+    "label": "Dolore toracico",
+    "category": "Deterioramento e infezioni",
+    "tier": "urgente",
+    "question": "L'ospite riferisce dolore o oppressione al torace?",
+    "criteria": {
+      "true": "Dolore toracico, retrosternale, oppressione al petto, riferito ora.",
+      "false": "Nessun dolore toracico o dolore negato."
+    },
+    "keywords": [
+      "dolore toracic*",
+      "dolore al petto",
+      "retrosternal*",
+      "oppressione toracic*",
+      "peso sul petto"
+    ],
+    "threshold_yellow": 0.5,
+    "threshold_red": 0.8,
+    "scale": "ECG; valutazione medica urgente",
+    "ministry_indicator": "Deterioramento clinico",
+    "literature": "ESC ACS guidelines 2023",
+    "trigger": "ECG se disponibile, avvisa subito il medico",
+    "scheda": "news",
+    "actions": [
+      "Esegui ECG se disponibile",
+      "Avvisa subito il medico",
+      "Non lasciare solo l'ospite"
+    ]
+  },
+  {
+    "id": "infezione_respiratoria",
+    "label": "Sospetta infezione respiratoria",
+    "category": "Deterioramento e infezioni",
+    "tier": "monitoraggio",
+    "question": "L'ospite presenta tosse nuova o in peggioramento, catarro o rantoli?",
+    "criteria": {
+      "true": "Tosse nuova o peggiorata, espettorato, catarro, rantoli.",
+      "false": "Nessun segno respiratorio infettivo."
+    },
+    "keywords": [
+      "tosse produttiva",
+      "tosse nuova",
+      "catarro",
+      "espettorat*",
+      "rantoli",
+      "broncopolmonit*",
+      "polmonit*"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "Criteri McGeer revisionati",
+    "ministry_indicator": "Sorveglianza ICA in strutture residenziali (PNCAR)",
+    "literature": "Stone et al. 2012, McGeer criteria revisited",
+    "trigger": "Apri scheda infezioni, valuta isolamento",
+    "scheda": "infezioni",
+    "actions": [
+      "Calcola NEWS2",
+      "Valuta precauzioni per droplet"
+    ]
+  },
+  {
+    "id": "infezione_urinaria",
+    "label": "Sospetta infezione urinaria sintomatica",
+    "category": "Deterioramento e infezioni",
+    "tier": "monitoraggio",
+    "question": "L'ospite ha sintomi urinari NUOVI (bruciore, dolore sovrapubico, urgenza, ematuria) o febbre con catetere vescicale?",
+    "criteria": {
+      "true": "Bruciore minzionale, dolore sovrapubico o al fianco, urgenza nuova, ematuria, febbre in portatore di catetere.",
+      "false": "Solo urine torbide o maleodoranti senza altri sintomi: non basta per sospettare infezione."
+    },
+    "keywords": [
+      "bruciore minzional*",
+      "bruciore a urinare",
+      "disuri*",
+      "dolore sovrapubic*",
+      "ematuri*",
+      "cistite",
+      "ivu"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "Criteri McGeer revisionati / Loeb",
+    "ministry_indicator": "Sorveglianza ICA e uso appropriato antibiotici (PNCAR)",
+    "literature": "Stone 2012; AMDA Choosing Wisely: no urinocoltura senza sintomi",
+    "trigger": "Apri scheda infezioni; urinocoltura solo se sintomatico",
+    "scheda": "infezioni",
+    "actions": [
+      "Urinocoltura solo con sintomi",
+      "Stick urine e parametri"
+    ]
+  },
+  {
+    "id": "diarrea_acuta",
+    "label": "Diarrea acuta",
+    "category": "Deterioramento e infezioni",
+    "tier": "monitoraggio",
+    "question": "L'ospite ha diarrea acuta (tre o più scariche liquide in 24 ore)?",
+    "criteria": {
+      "true": "Scariche liquide ripetute, diarrea insorta di recente.",
+      "false": "Alvo normale, stitico o non menzionato."
+    },
+    "keywords": [
+      "diarre*",
+      "scariche liquide",
+      "scariche diarroiche",
+      "feci liquide",
+      "alvo diarroico"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "Criteri McGeer (gastroenterite)",
+    "ministry_indicator": "Prevenzione focolai (C. difficile, norovirus)",
+    "literature": "Stone 2012; ESCMID C. difficile 2021",
+    "trigger": "Isolamento da contatto, valuta C. difficile",
+    "scheda": "infezioni",
+    "actions": [
+      "Precauzioni da contatto",
+      "Idratazione e bilancio",
+      "Informa il medico"
+    ]
+  },
+  {
+    "id": "cambiamento_condizioni",
+    "label": "Cambiamento rispetto al solito",
+    "category": "Deterioramento e infezioni",
+    "tier": "monitoraggio",
+    "question": "Il diario descrive l'ospite come diverso dal solito (più stanco, spento, non è lui, cambiato rispetto a ieri)?",
+    "criteria": {
+      "true": "Cambiamento rispetto alle condizioni abituali riferito da operatori o familiari.",
+      "false": "Condizioni abituali o nessun confronto con il solito."
+    },
+    "keywords": [
+      "diverso dal solito",
+      "non è lui",
+      "non è lei",
+      "più spent*",
+      "cambiat* rispetto a ieri",
+      "peggio di ieri",
+      "insolitamente"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "INTERACT Stop and Watch",
+    "ministry_indicator": "Ospedalizzazioni evitabili",
+    "literature": "INTERACT program (Ouslander 2011)",
+    "trigger": "Stop and Watch: segnala all'infermiere, rivaluta parametri",
+    "scheda": null,
+    "actions": [
+      "Rivaluta parametri vitali",
+      "Segnala all'infermiere di turno"
+    ]
+  },
+  {
+    "id": "dolore_riferito",
+    "label": "Dolore riferito",
+    "category": "Dolore e comfort",
+    "tier": "evento",
+    "question": "L'ospite riferisce dolore ADESSO (qualsiasi intensità maggiore di zero)?",
+    "criteria": {
+      "true": "Dolore attuale riferito, anche con NRS: dolore forte, dolente, lamenta dolore.",
+      "false": "Dolore negato, assente, NRS 0, oppure non menzionato."
+    },
+    "keywords": [
+      "dolore",
+      "dolori",
+      "dolente",
+      "lamenta dolore",
+      "nrs",
+      "vas"
+    ],
+    "threshold_yellow": 0.6,
+    "threshold_red": 0.85,
+    "scale": "NRS 0-10",
+    "ministry_indicator": "Legge 38/2010 art. 7: rilevazione del dolore obbligatoria in cartella",
+    "literature": "Legge 38/2010; AGS Persistent pain in older persons",
+    "trigger": "Apri scheda dolore (obbligatoria Legge 38/2010)",
+    "scheda": "dolore",
+    "actions": [
+      "Registra NRS e sede",
+      "Somministra terapia prescritta e rivaluta"
+    ]
+  },
+  {
+    "id": "dolore_comportamentale",
+    "label": "Dolore da segni comportamentali",
+    "category": "Dolore e comfort",
+    "tier": "evento",
+    "question": "In un ospite che non riesce a riferirlo, sono descritti segni comportamentali di dolore (smorfie, lamenti, gemiti, protezione di una parte del corpo)?",
+    "criteria": {
+      "true": "Smorfie, lamenti, gemiti, pianto, irrigidimento, protezione di una parte del corpo.",
+      "false": "Nessun segno comportamentale di dolore."
+    },
+    "keywords": [
+      "smorfi*",
+      "lamenti",
+      "lamentos*",
+      "si lamenta",
+      "gemit*",
+      "geme",
+      "protegge",
+      "painad"
+    ],
+    "threshold_yellow": 0.6,
+    "threshold_red": 0.85,
+    "scale": "PAINAD (demenza avanzata)",
+    "ministry_indicator": "Legge 38/2010 art. 7",
+    "literature": "Warden et al. 2003, PAINAD",
+    "trigger": "Apri scheda dolore con PAINAD",
+    "scheda": "dolore",
+    "actions": [
+      "Calcola PAINAD",
+      "Cerca la causa (postura, globo, fecaloma)"
+    ]
+  },
+  {
+    "id": "dolore_non_controllato",
+    "label": "Dolore non controllato",
+    "category": "Dolore e comfort",
+    "tier": "monitoraggio",
+    "question": "Il dolore persiste nonostante la terapia o l'ospite ha richiesto antidolorifico al bisogno in più?",
+    "criteria": {
+      "true": "Dolore persistente dopo terapia, richiesta di dose al bisogno, terapia antalgica inefficace.",
+      "false": "Dolore controllato o nessuna terapia antalgica menzionata."
+    },
+    "keywords": [
+      "dolore non controllato",
+      "nonostante la terapia",
+      "ancora dolore",
+      "al bisogno",
+      "terapia non efficace",
+      "richiede antidolorifico"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "NRS / PAINAD; scala analgesica OMS",
+    "ministry_indicator": "Legge 38/2010",
+    "literature": "WHO analgesic ladder; AGS 2009",
+    "trigger": "Rivaluta terapia antalgica con il medico",
+    "scheda": "dolore",
+    "actions": [
+      "Informa il medico per rivalutare la terapia"
+    ]
+  },
+  {
+    "id": "delirium",
+    "label": "Delirium / confusione acuta",
+    "category": "Cognizione e comportamento",
+    "tier": "urgente",
+    "question": "L'ospite presenta confusione insorta in modo acuto o fluttuante (disorientato, non riconosce familiari, attenzione alterata)?",
+    "criteria": {
+      "true": "Confusione nuova o peggiorata, disorientamento, non riconosce familiari, andamento fluttuante, ipo o iperattività.",
+      "false": "Stato cognitivo abituale, vigile e orientato, oppure demenza stabile senza cambiamenti."
+    },
+    "keywords": [
+      "confus*",
+      "disorientat*",
+      "non riconosce",
+      "fluttuant*",
+      "delirium",
+      "stato confusionale"
+    ],
+    "threshold_yellow": 0.5,
+    "threshold_red": 0.75,
+    "scale": "4AT o CAM",
+    "ministry_indicator": "Qualità dell'assistenza (delirium spesso non riconosciuto in RSA)",
+    "literature": "NICE CG103; SIGG/AIP 4AT; Inouye 1990 CAM",
+    "trigger": "Valuta 4AT/CAM, cerca la causa",
+    "scheda": "delirium",
+    "actions": [
+      "Somministra 4AT o CAM",
+      "Cerca cause: dolore, globo, fecaloma, infezione, farmaci",
+      "Avvisa il medico"
+    ],
+    "mock": {
+      "p1": 0.74,
+      "p2": 0.76,
+      "p3": 0.78
+    }
+  },
+  {
+    "id": "bpsd_agitazione",
+    "label": "Agitazione / BPSD",
+    "category": "Cognizione e comportamento",
+    "tier": "evento",
+    "question": "L'ospite presenta agitazione, aggressività, wandering o vocalizzazioni ripetute?",
+    "criteria": {
+      "true": "Agitazione, aggressività verbale o fisica, wandering, tentativi di uscita, urla o vocalizzi ripetuti.",
+      "false": "Comportamento tranquillo o nessun disturbo descritto."
+    },
+    "keywords": [
+      "agitat*",
+      "agitazione",
+      "aggressiv*",
+      "wandering",
+      "vocalizz*",
+      "urla",
+      "irrequiet*",
+      "tenta di uscire"
+    ],
+    "threshold_yellow": 0.6,
+    "threshold_red": 0.85,
+    "scale": "NPI-NH; Cohen-Mansfield",
+    "ministry_indicator": "BPSD e uso di antipsicotici",
+    "literature": "IPA BPSD guide; NICE NG97 Dementia",
+    "trigger": "Apri scheda BPSD: trigger, interventi non farmacologici",
+    "scheda": "bpsd",
+    "actions": [
+      "Cerca il fattore scatenante",
+      "Interventi non farmacologici prima dei farmaci"
+    ],
+    "mock": {
+      "p1": 0.62,
+      "p2": 0.8,
+      "p3": 0.88
+    }
+  },
+  {
+    "id": "allucinazioni",
+    "label": "Allucinazioni / deliri",
+    "category": "Cognizione e comportamento",
+    "tier": "evento",
+    "question": "L'ospite ha allucinazioni (vede o sente cose inesistenti) o idee deliranti (convinzioni false)?",
+    "criteria": {
+      "true": "Allucinazioni visive o uditive, convinzioni false come furti o persecuzioni.",
+      "false": "Nessun sintomo psicotico descritto."
+    },
+    "keywords": [
+      "allucinaz*",
+      "vede persone",
+      "vede animali",
+      "sente voci",
+      "idee deliranti",
+      "dice che le rubano",
+      "persecutori*"
+    ],
+    "threshold_yellow": 0.6,
+    "threshold_red": 0.85,
+    "scale": "NPI-NH (deliri, allucinazioni)",
+    "ministry_indicator": "BPSD e uso di antipsicotici",
+    "literature": "NPI; NICE NG97",
+    "trigger": "Apri scheda BPSD, valuta con il medico",
+    "scheda": "bpsd",
+    "actions": [
+      "Escludi delirium",
+      "Informa il medico"
+    ]
+  },
+  {
+    "id": "depressione",
+    "label": "Umore depresso",
+    "category": "Cognizione e comportamento",
+    "tier": "monitoraggio",
+    "question": "L'ospite appare triste o depresso (piange, esprime sconforto, perdita di speranza)?",
+    "criteria": {
+      "true": "Tristezza, pianto, sconforto, perdita di interesse, frasi di sfiducia.",
+      "false": "Umore abituale o non menzionato."
+    },
+    "keywords": [
+      "depress*",
+      "triste",
+      "tristezza",
+      "piange",
+      "pianto",
+      "sconfort*",
+      "giù di morale"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "GDS-15; Cornell (demenza)",
+    "ministry_indicator": "Benessere psicosociale",
+    "literature": "Yesavage GDS; Cornell Scale for Depression in Dementia",
+    "trigger": "Valuta GDS o Cornell",
+    "scheda": "pai",
+    "actions": [
+      "Somministra GDS o Cornell",
+      "Informa il medico e lo psicologo"
+    ]
+  },
+  {
+    "id": "ritiro_sociale",
+    "label": "Ritiro sociale / apatia",
+    "category": "Cognizione e comportamento",
+    "tier": "monitoraggio",
+    "question": "L'ospite si isola, rifiuta le attività o appare apatico?",
+    "criteria": {
+      "true": "Resta in camera, rifiuta attività o visite, apatia, disinteresse.",
+      "false": "Partecipa alle attività o non menzionato."
+    },
+    "keywords": [
+      "isolat*",
+      "si isola",
+      "rifiuta le attività",
+      "apatic*",
+      "apatia",
+      "non vuole alzarsi",
+      "resta in camera"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "Apathy Evaluation Scale; osservazione educatore",
+    "ministry_indicator": "Qualità della vita e personalizzazione (progetto CCM 2010)",
+    "literature": "Lanctôt 2017, apathy in dementia",
+    "trigger": "Rivaluta nel PAI con educatore/animazione",
+    "scheda": "pai",
+    "actions": [
+      "Coinvolgi educatore e familiari"
+    ]
+  },
+  {
+    "id": "rischio_suicidario",
+    "label": "Ideazione di morte / rischio suicidario",
+    "category": "Cognizione e comportamento",
+    "tier": "urgente",
+    "question": "L'ospite esprime desiderio di morire, idee di farla finita o compie gesti autolesivi?",
+    "criteria": {
+      "true": "Frasi come vorrei morire, non voglio più vivere, farla finita, gesti autolesivi, accumulo di farmaci.",
+      "false": "Nessuna espressione di morte o autolesionismo."
+    },
+    "keywords": [
+      "vorrei morire",
+      "voglio morire",
+      "non voglio più vivere",
+      "farla finita",
+      "togliermi la vita",
+      "autolesiv*",
+      "meglio morto",
+      "meglio morta"
+    ],
+    "threshold_yellow": 0.4,
+    "threshold_red": 0.7,
+    "scale": "Valutazione clinica; Columbia (C-SSRS) screening",
+    "ministry_indicator": "Evento sentinella: suicidio o tentato suicidio (SIMES)",
+    "literature": "WHO LIVE LIFE 2021; NICE NG225 Self-harm",
+    "trigger": "Non lasciare solo, avvisa subito il medico",
+    "scheda": null,
+    "actions": [
+      "Non lasciare solo l'ospite",
+      "Rimuovi mezzi pericolosi e farmaci accessibili",
+      "Avvisa subito il medico"
+    ]
+  },
+  {
+    "id": "insonnia",
+    "label": "Disturbi del sonno",
+    "category": "Cognizione e comportamento",
+    "tier": "monitoraggio",
+    "question": "L'ospite non ha dormito di notte o ha il ritmo sonno-veglia invertito?",
+    "criteria": {
+      "true": "Notte insonne, risvegli ripetuti, inversione del ritmo sonno-veglia.",
+      "false": "Ha riposato o non menzionato."
+    },
+    "keywords": [
+      "non ha dormito",
+      "non dorme",
+      "insonni*",
+      "inversione del ritmo",
+      "sveglio tutta la notte",
+      "sveglia tutta la notte"
+    ],
+    "threshold_yellow": 0.75,
+    "threshold_red": 0.9,
+    "scale": "Diario del sonno",
+    "ministry_indicator": "-",
+    "literature": "AGS Beers 2023 (evitare ipnotici)",
+    "trigger": "Diario del sonno; evita ipnotici se possibile",
+    "scheda": null,
+    "actions": [
+      "Compila diario del sonno"
+    ]
+  },
+  {
+    "id": "declino_funzionale",
+    "label": "Declino funzionale / allettamento",
+    "category": "Autonomia e funzione",
+    "tier": "monitoraggio",
+    "question": "L'ospite ha perso autonomia rispetto a prima (non si alza più, non cammina più, resta allettato)?",
+    "criteria": {
+      "true": "Nuova perdita di autonomia: non si alza, non deambula più, allettato, non si mobilizza.",
+      "false": "Autonomia abituale o nessun cambiamento descritto."
+    },
+    "keywords": [
+      "non si alza",
+      "non cammina più",
+      "non deambula più",
+      "allettat*",
+      "costrett* a letto",
+      "perdita di autonomia",
+      "non mobilizzat*",
+      "sempre a letto"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "Barthel Index; InterRAI ADL",
+    "ministry_indicator": "Valutazione multidimensionale (VMD) e PAI",
+    "literature": "Barthel; InterRAI LTCF ADL hierarchy",
+    "trigger": "Rivaluta Barthel e PAI",
+    "scheda": "pai",
+    "actions": [
+      "Rivaluta Barthel",
+      "Piano di mobilizzazione e prevenzione LDP"
+    ]
+  },
+  {
+    "id": "ritenzione_urinaria",
+    "label": "Ritenzione urinaria / globo",
+    "category": "Autonomia e funzione",
+    "tier": "monitoraggio",
+    "question": "L'ospite non urina da molte ore o ha un globo vescicale?",
+    "criteria": {
+      "true": "Non urina da ore, globo vescicale, vescica distesa, dolore sovrapubico.",
+      "false": "Diuresi presente o non menzionata."
+    },
+    "keywords": [
+      "globo vescical*",
+      "globo",
+      "ritenzione urinaria",
+      "non urina",
+      "vescica distesa",
+      "vescica piena"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "Bladder scan",
+    "ministry_indicator": "Catetere a permanenza (progetto CCM 2010)",
+    "literature": "Causa frequente di delirium e agitazione nell'anziano",
+    "trigger": "Bladder scan, valuta cateterismo con il medico",
+    "scheda": null,
+    "actions": [
+      "Esegui bladder scan",
+      "Informa il medico"
+    ]
+  },
+  {
+    "id": "incontinenza_nuova",
+    "label": "Incontinenza di nuova insorgenza",
+    "category": "Autonomia e funzione",
+    "tier": "monitoraggio",
+    "question": "È comparsa un'incontinenza urinaria o fecale nuova in un ospite prima continente?",
+    "criteria": {
+      "true": "Incontinenza insorta di recente, prima assente.",
+      "false": "Continenza abituale o incontinenza già nota e stabile."
+    },
+    "keywords": [
+      "incontinenza nuova",
+      "nuova incontinenza",
+      "incontinente da",
+      "si è bagnat*",
+      "non trattiene"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "Diario minzionale",
+    "ministry_indicator": "Incontinenza (progetto CCM 2010)",
+    "literature": "ICS/ICI guidelines older persons",
+    "trigger": "Diario minzionale, rivaluta PAI",
+    "scheda": "pai",
+    "actions": [
+      "Diario minzionale di 3 giorni",
+      "Escludi infezione e globo"
+    ]
+  },
+  {
+    "id": "stipsi_fecaloma",
+    "label": "Stipsi / fecaloma",
+    "category": "Autonomia e funzione",
+    "tier": "monitoraggio",
+    "question": "L'ospite non evacua da 3 o più giorni o si sospetta un fecaloma?",
+    "criteria": {
+      "true": "Alvo chiuso da 3 o più giorni, stipsi, fecaloma, addome teso.",
+      "false": "Alvo regolare o non menzionato."
+    },
+    "keywords": [
+      "alvo chiuso",
+      "stipsi",
+      "stitichezza",
+      "non evacua",
+      "fecaloma",
+      "stitic*"
+    ],
+    "threshold_yellow": 0.7,
+    "threshold_red": 0.85,
+    "scale": "Diario dell'alvo; Bristol",
+    "ministry_indicator": "-",
+    "literature": "Causa frequente di delirium e agitazione nell'anziano",
+    "trigger": "Diario dell'alvo, esplorazione rettale se indicata",
+    "scheda": null,
+    "actions": [
+      "Controlla diario dell'alvo",
+      "Valuta con il medico lassativi o clistere"
+    ]
+  },
+  {
+    "id": "rifiuto_terapia",
+    "label": "Rifiuto della terapia",
+    "category": "Terapia",
+    "tier": "evento",
+    "question": "L'ospite ha rifiutato o sputato la terapia farmacologica?",
+    "criteria": {
+      "true": "Rifiuto di assumere farmaci, farmaci sputati o nascosti.",
+      "false": "Terapia assunta regolarmente o non menzionata."
+    },
+    "keywords": [
+      "rifiuta la terapia",
+      "rifiuta i farmaci",
+      "rifiutato la terapia",
+      "sputa",
+      "sputato",
+      "non prende la terapia",
+      "nasconde le pastiglie"
+    ],
+    "threshold_yellow": 0.6,
+    "threshold_red": 0.85,
+    "scale": "Registro somministrazione",
+    "ministry_indicator": "Sicurezza della terapia (Raccomandazioni n. 7, 17, 19)",
+    "literature": "Raccomandazione n. 19: manipolazione forme orali solide",
+    "trigger": "Segnala al medico; non nascondere farmaci nel cibo senza indicazione",
+    "scheda": null,
+    "actions": [
+      "Registra la dose non assunta",
+      "Informa il medico",
+      "Non nascondere farmaci nel cibo senza indicazione medica"
+    ]
+  },
+  {
+    "id": "effetto_avverso_farmaco",
+    "label": "Sospetto effetto avverso da farmaco",
+    "category": "Terapia",
+    "tier": "evento",
+    "question": "Il diario collega un sintomo nuovo (sonnolenza marcata, cadute, ipotensione, confusione) a un farmaco iniziato o modificato di recente?",
+    "criteria": {
+      "true": "Sintomo comparso dopo un farmaco nuovo o una variazione di dose.",
+      "false": "Nessun collegamento con variazioni di terapia."
+    },
+    "keywords": [
+      "dopo la nuova terapia",
+      "da quando prende",
+      "dopo il nuovo farmaco",
+      "dopo aver iniziato",
+      "effetto avverso",
+      "reazione avversa",
+      "troppo sedat*"
+    ],
+    "threshold_yellow": 0.6,
+    "threshold_red": 0.85,
+    "scale": "Criteri di Beers 2023; STOPP/START v3",
+    "ministry_indicator": "Farmacovigilanza AIFA; riconciliazione (Raccomandazione n. 17)",
+    "literature": "AGS Beers Criteria 2023; STOPP/START v3 2023",
+    "trigger": "Rivaluta la terapia con il medico, valuta segnalazione AIFA",
+    "scheda": null,
+    "actions": [
+      "Informa il medico per rivalutare la terapia",
+      "Valuta segnalazione di farmacovigilanza"
+    ]
+  },
+  {
+    "id": "invio_ps",
+    "label": "Invio in Pronto Soccorso / ricovero",
+    "category": "Organizzativo",
+    "tier": "evento",
+    "question": "Il diario indica che l'ospite è stato o sta per essere inviato in Pronto Soccorso o ricoverato?",
+    "criteria": {
+      "true": "Chiamato il 118, inviato in PS, trasferito o ricoverato in ospedale.",
+      "false": "Nessun trasferimento avvenuto o disposto."
+    },
+    "keywords": [
+      "inviat* in ps",
+      "invio in ps",
+      "pronto soccorso",
+      "chiamato il 118",
+      "chiamata 118",
+      "trasferit* in ospedale",
+      "ricoverat* in ospedale"
+    ],
+    "threshold_yellow": 0.6,
+    "threshold_red": 0.85,
+    "scale": "Scheda di trasferimento SBAR",
+    "ministry_indicator": "Ospedalizzazioni e accessi in PS da struttura residenziale (flusso FAR, indicatori regionali)",
+    "literature": "INTERACT; ospedalizzazioni potenzialmente evitabili (Ouslander 2010)",
+    "trigger": "Compila scheda di trasferimento SBAR",
+    "scheda": "trasferimento",
+    "actions": [
+      "Compila SBAR e lettera di accompagnamento",
+      "Informa i familiari"
+    ]
+  }
+]

@@ -1,7 +1,9 @@
-# Diario clinico con Jev (TypeSafe AI via Vercel AI Gateway)
+# jevd: diario clinico per RSA con Jev (TypeSafe AI via Vercel AI Gateway)
 
-L'infermiere scrive o detta il diario; l'app estrae parametri vitali ed eventi
-e propone l'apertura delle schede Cadute / Lesioni.
+Infermieri e OSS scrivono o dettano il diario. Il parser legge i numeri (righello), Jev valuta 38 rischi
+clinico-assistenziali con probabilità calibrate (cane da tartufo) e propone le schede dedicate.
+
+**Documentazione completa:** [`docs/OBIETTIVO_PROGETTO_RSA.md`](docs/OBIETTIVO_PROGETTO_RSA.md)
 
 ## Chiave API (solo su Vercel)
 
@@ -18,15 +20,15 @@ Test chiave isolato: `/api/analyze?probe=1` invia l'esempio minimo della documen
 Senza chiave l'app funziona comunque in **Simulazione locale** (anche se selezioni "Jev via Gateway":
 il server risponde `MISSING_KEY` e la UI ripiega sulla simulazione avvisandoti).
 
-## Come funziona
+## Struttura
 
-- `lib/jev-questions.ts`: 19 domande Jev nello schema ufficiale `/v1/evaluate`
-  (`type` + `instructions` + `criteria`). Validate localmente prima dell'invio.
-- `lib/parser.ts`: legge dal testo i numeri esatti e gli snippet (Jev non restituisce numeri liberi,
-  ma probabilità su opzioni e fasce).
-- `lib/clinical.ts`: unisce parser + risposte Jev, confronta le fasce (concorde/discorde), segnalazioni, esempi.
-- `app/api/analyze/route.ts`: runtime Node, timeout 10 s, Zero Data Retention, errori con codice.
-- `lib/useDictation.ts`: dettatura Web Speech API `it-IT` (Chrome, Edge, Safari; non Firefox).
-- `/scheda-cadute`, `/scheda-lesioni`: pagine segnaposto che ricevono i parametri proposti.
+- `data/jev-questions-rsa.json`: le 38 domande (fonte unica, modificabile senza toccare il codice).
+- `lib/jev-questions.ts`: converte il JSON nello schema del Gateway (`question` → `instructions`) e lo valida.
+- `lib/parser.ts`: il righello (PA anche senza slash: "90 135" → 135/90).
+- `lib/clinical.ts`: simulazione a keyword, soglie per domanda, report, esempi pronti.
+- `app/api/analyze/route.ts`: runtime Node, timeout 10 s, Zero Data Retention.
+- `app/scheda/[tipo]`: 11 schede dimostrative raggiungibili come `/scheda-cadute?source=jev` (rewrite in `next.config.js`).
+
+La simulazione locale è il default. "Jev via Gateway" è opzionale e richiede la chiave.
 
 Prototipo dimostrativo: soglie cliniche non validate, non usare per decisioni reali.

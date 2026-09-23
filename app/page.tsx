@@ -1,9 +1,10 @@
 'use client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ESEMPI, mockAnalyze, buildReport, type AnalysisResult } from '../lib/clinical';
+import { ESEMPI, mockAnalyze, buildReport, type AnalysisResult, type Report, type Esempio } from '../lib/clinical';
 import type { Span } from '../lib/parser';
 import { useDictation } from '../lib/useDictation';
 import { ReportView, EvidenceText } from '../components/ReportView';
+import { CompareView } from '../components/CompareView';
 
 type Mode = 'mock' | 'jev';
 type ApiError = { code: string; message: string; details?: unknown; status?: number };
@@ -11,6 +12,7 @@ type ServerStatus = { keyConfigured: boolean; questions: number; schemaErrors: s
 
 export default function Page() {
   const [diary, setDiary] = useState(ESEMPI[0].text);
+  const [compare, setCompare] = useState<{ ex: Esempio; report: Report }[] | null>(null);
   const [analyzedText, setAnalyzedText] = useState('');
   const [mode, setMode] = useState<Mode>('mock');
   const [loading, setLoading] = useState(false);
@@ -21,13 +23,14 @@ export default function Page() {
   const [server, setServer] = useState<ServerStatus>(null);
   const [focus, setFocus] = useState<Span | null>(null);
   const [showRaw, setShowRaw] = useState(false);
+  const [compareMock, setCompareMock] = useState(true);
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   // Stato configurazione server (chiave presente?) senza chiamare il Gateway
   useEffect(() => {
     fetch('/api/analyze', { cache: 'no-store' })
       .then((r) => r.json())
-      .then((s) => { setServer(s); if (s?.keyConfigured) setMode('jev'); })
+      .then((s) => setServer(s))
       .catch(() => setServer(null));
   }, []);
 
@@ -52,7 +55,7 @@ export default function Page() {
     const text = diary.trim();
     if (text.length < 3) { setError({ code: 'EMPTY_DIARY', message: 'Scrivi o detta il diario prima di analizzarlo.' }); return; }
     if (mic.state === 'listening') mic.stop();
-    setLoading(true); setError(null); setNotice(null); setShowRaw(false);
+    setLoading(true); setError(null); setNotice(null); setShowRaw(false); setCompare(null);
     setAnalyzedText(diary);
     const t0 = Date.now();
     try {
@@ -86,6 +89,36 @@ export default function Page() {
     }
   }, [diary, mode, mic, runMock]);
 
+  // Confronto A/B: stessi numeri, contesto diverso
+  const runCompare = useCallback(async () => {
+    const pair = ESEMPI.filter((e) => e.id === 'vitali-a' || e.id === 'vitali-b');
+    if (mic.state === 'listening') mic.stop();
+    setLoading(true); setError(null); setNotice(null);
+    try {
+      let results: AnalysisResult[];
+      if (mode === 'mock') {
+        await new Promise((r) => setTimeout(r, 120));
+        results = pair.map((e) => mockAnalyze(e.text));
+      } else {
+        const res = await Promise.all(pair.map((e) => fetch('/api/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ diary: e.text }) }).then(async (r) => ({ ok: r.ok, json: await r.json().catch(() => null) }))));
+        const bad = res.find((r) => !r.ok);
+        if (bad) {
+          if (bad.json?.error?.code === 'MISSING_KEY') {
+            setNotice('Chiave AI Gateway non configurata sul server: confronto calcolato con la simulazione locale.');
+            results = pair.map((e) => mockAnalyze(e.text));
+          } else {
+            setError({ code: bad.json?.error?.code || 'HTTP', message: bad.json?.error?.message || 'Errore durante il confronto', details: bad.json?.error?.details });
+            return;
+          }
+        } else results = res.map((r) => r.json as AnalysisResult);
+      }
+      setCompare(pair.map((ex, i) => ({ ex, report: buildReport(ex.text, results[i]) })));
+      setCompareMock(results[0].mode === 'mock');
+    } finally {
+      setLoading(false);
+    }
+  }, [mode, mic]);
+
   // Ctrl/Cmd + Invio per analizzare
   const onKeyDown = (e: React.KeyboardEvent) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); analyze(); }
@@ -108,7 +141,7 @@ export default function Page() {
             </div>
             <div>
               <h1 className="text-base font-semibold leading-tight text-slate-900">Diario clinico</h1>
-              <p className="text-xs text-slate-500">Medicina interna, letto 12 (paziente dimostrativo)</p>
+              <p className="text-xs text-slate-500">RSA, nucleo 2, camera 12 (ospite dimostrativo)</p>
             </div>
           </div>
 
@@ -138,8 +171,8 @@ export default function Page() {
         <section className="lg:col-span-5">
           <div className="rounded-2xl border border-slate-200 bg-white shadow-sm lg:sticky lg:top-6">
             <div className="border-b border-slate-100 px-4 py-3">
-              <h2 className="text-sm font-semibold text-slate-900">Diario infermieristico</h2>
-              <p className="text-xs text-slate-500">Scrivi o detta liberamente: parametri ed eventi vengono estratti in automatico.</p>
+              <h2 className="text-sm font-semibold text-slate-900">Diario assistenziale</h2>
+              <p className="text-xs text-slate-500">Scrivi o detta liberamente: il parser legge i numeri, Jev valuta i rischi.</p>
             </div>
 
             <div className="px-4 pt-3">
@@ -149,12 +182,22 @@ export default function Page() {
                   <button
                     key={ex.id}
                     onClick={() => { setDiary(ex.text); taRef.current?.focus(); }}
-                    className={`rounded-full border px-2.5 py-1 text-xs outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500 ${diary === ex.text ? 'border-blue-300 bg-blue-50 text-blue-800' : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white'}`}
+                    title={`Atteso: ${ex.atteso}`}
+                    className={`inline-flex items-center gap-1.5 rounded-full border py-1 pl-1 pr-2.5 text-xs outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500 ${diary === ex.text ? 'border-blue-300 bg-blue-50 text-blue-800' : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white'}`}
                   >
+                    <span className={`grid h-5 min-w-[20px] place-items-center rounded-full px-1 text-[10px] font-semibold tabular ${diary === ex.text ? 'bg-blue-700 text-white' : 'bg-slate-200 text-slate-700'}`}>{ex.n}</span>
                     {ex.label}
                   </button>
                 ))}
               </div>
+              {(() => { const cur = ESEMPI.find((e) => e.text === diary); return cur ? <p className="mt-2 text-xs text-slate-500">Atteso: {cur.atteso}</p> : null; })()}
+              <button
+                onClick={runCompare}
+                disabled={loading}
+                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm font-semibold text-blue-800 outline-none transition hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50"
+              >
+                Confronta 4A e 4B: stessa PA 135/90, allarme diverso
+              </button>
             </div>
 
             <div className="p-4">
@@ -215,7 +258,7 @@ export default function Page() {
         {/* Colonna risultati */}
         <section className="space-y-5 lg:col-span-7" aria-live="polite">
           {/* Barra di stato risultato */}
-          {result && (
+          {result && !compare && (
             <div className="animate-rise flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs">
               <span className={`rounded-full px-2 py-0.5 font-semibold ${isMock ? 'bg-slate-200 text-slate-700' : 'bg-blue-700 text-white'}`}>
                 {isMock ? 'Simulazione locale' : 'Jev reale'}
@@ -263,20 +306,22 @@ export default function Page() {
             </div>
           )}
 
-          {!result && !error && !loading && (
+          {compare && <CompareView items={compare} mock={compareMock} onClose={() => setCompare(null)} />}
+
+          {!compare && !result && !error && !loading && (
             <div className="grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-white/60 px-6 py-16 text-center">
               <p className="text-sm font-medium text-slate-700">Nessuna analisi ancora</p>
               <p className="mt-1 max-w-sm text-sm text-slate-500">Scegli un esempio o detta il diario, poi premi «{mode === 'jev' ? 'Analizza con Jev' : 'Analizza (simulazione)'}».</p>
             </div>
           )}
 
-          {loading && !result && (
+          {loading && !result && !compare && (
             <div className="grid grid-cols-2 gap-3 xl:grid-cols-3" aria-hidden>
               {Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-28 animate-pulse rounded-xl bg-slate-200/70" />)}
             </div>
           )}
 
-          {report && result && (
+          {!compare && report && result && (
             <div className={`space-y-5 transition-opacity ${loading ? 'opacity-50' : ''}`}>
               <ReportView report={report} mock={isMock} onHover={setFocus} />
 
@@ -301,7 +346,7 @@ export default function Page() {
               </section>
 
               <p className="text-[11px] leading-relaxed text-slate-400">
-                I valori numerici e gli snippet sono letti dal testo da un parser locale; Jev assegna probabilità a eventi e fasce cliniche.
+                Il parser è il righello: legge i numeri. Jev è il cane da tartufo: legge il contesto e restituisce probabilità calibrate che fanno scattare gli alert. In simulazione le probabilità sono fisse, derivate dalle keyword del file data/jev-questions-rsa.json.
                 Prototipo dimostrativo: non usare per decisioni cliniche reali.
               </p>
             </div>
