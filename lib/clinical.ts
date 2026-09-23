@@ -320,24 +320,42 @@ export function buildReport(diary: string, result: AnalysisResult): Report {
 }
 
 // ---------------- Esempi pronti RSA ----------------
-export type Esempio = { id: string; n: string; label: string; text: string; atteso: string };
+// gruppo 'alert': mostrano soglie e schede. gruppo 'trappola': testi dove un parser a parole chiave sbaglia.
+export type Esempio = { id: string; n: string; label: string; text: string; atteso: string; gruppo: 'alert' | 'trappola' };
 export const ESEMPI: Esempio[] = [
-  { id: 'stabile', n: '1', label: 'Controllo stabile', atteso: 'Nessun alert, quadro stabile 94%',
+  { gruppo: 'alert', id: 'stabile', n: '1', label: 'Stabile', atteso: 'Nessun alert, quadro stabile 94%',
     text: 'ospite a letto, PA 135/90, FC 88, sat 96% in aria, apiretico 36.6, tranquillo, collabora' },
-  { id: 'caduta-lieve', n: '2', label: 'Caduta lieve con escoriazione', atteso: 'Giallo: caduta 89% e lesione 85%, proposte schede caduta e lesioni',
+  { gruppo: 'alert', id: 'caduta-lieve', n: '2', label: 'Caduta lieve', atteso: 'Giallo: caduta 89% e lesione 85%, proposte schede caduta e lesioni',
     text: 'riferisce caduta ieri sera in giardino, piccola escoriazione ginocchio dx, ora deambula senza dolore, PA 130/80 FC 78' },
-  { id: 'frattura', n: '3', label: 'Trovato a terra, sospetta frattura', atteso: 'Rosso: sospetta frattura di femore 86%',
+  { gruppo: 'alert', id: 'frattura', n: '3', label: 'Sospetta frattura', atteso: 'Rosso: sospetta frattura di femore 86%',
     text: 'trovato a terra stamattina in bagno, non ricorda caduta, dolore forte anca dx, non carica arto, accorciamento' },
-  { id: 'vitali-a', n: '4A', label: 'Stessi vitali A: tranquillo', atteso: 'Verde: stabile 94%',
+  { gruppo: 'alert', id: 'vitali-a', n: '4A', label: 'Tranquillo', atteso: 'Verde: stabile 94%',
     text: 'PA 135/90 FC 88 apiretico tranquillo' },
-  { id: 'vitali-b', n: '4B', label: 'Stessi vitali B: pallido e confuso', atteso: 'Rosso: presincope 81%, confusione 74%',
+  { gruppo: 'alert', id: 'vitali-b', n: '4B', label: 'Pallido e confuso', atteso: 'Rosso: presincope 81%, confusione 74%',
     text: 'PA 135/90 FC 88 pallido sudato dice di sentirsi svenire, un po\' confuso' },
-  { id: 'negazioni', n: '5', label: 'Negazioni: nega, non', atteso: 'Dolore 5%, caduta 4%, dispnea 3%: nessun falso allarme',
+  { gruppo: 'alert', id: 'negazioni', n: '5', label: 'Negazioni', atteso: 'Dolore 5%, caduta 4%, dispnea 3%: nessun falso allarme',
     text: 'nega dolore, apiretico 36.8, nega caduta, non dispnoico, PA 125/80 FC 72' },
-  { id: 'passato', n: '6', label: 'Febbre ieri, oggi no', atteso: 'Febbre in atto 8%: nessun falso allarme',
+  { gruppo: 'alert', id: 'passato', n: '6', label: 'Febbre ieri', atteso: 'Febbre in atto 8%: nessun falso allarme',
     text: 'la figlia riferisce che ieri la mamma aveva febbre alta 38.5, oggi 36.8, nega febbre attuale, PA 120/70' },
-  { id: 'delirium', n: '7', label: 'Delirium, non riconosce', atteso: 'Rosso: delirium 78%, proposta 4AT/CAM',
+  { gruppo: 'alert', id: 'delirium', n: '7', label: 'Delirium', atteso: 'Rosso: delirium 78%, proposta 4AT/CAM',
     text: 'confuso stamattina, non riconosce familiari, disorientato nel tempo e spazio, agitazione' },
-  { id: 'sepsi', n: '8', label: 'Early warning, NEWS2', atteso: 'Rosso: presincope 82%, deterioramento/sepsi 78%',
+  { gruppo: 'alert', id: 'sepsi', n: '8', label: 'Early warning', atteso: 'Rosso: presincope 82%, deterioramento/sepsi 78%',
     text: 'pallido, sudato, FC 115, PA 90/60, febbricola 37.8°C, dice sentirsi svenire, sat 92%' },
+
+  { gruppo: 'trappola', id: 'trap-a', n: 'A', label: 'Seduta per terra', atteso: 'Corretto: è una caduta. Parser: non la vede (manca la parola "caduta")',
+    text: 'Stamattina alle 6 l\'ho trovata seduta per terra accanto al comodino, dice che le sono cedute le gambe mentre cercava le pantofole. Rialzata in due operatori, nessun dolore riferito. PA 125/75, FC 80.' },
+  { gruppo: 'trappola', id: 'trap-b', n: 'B', label: 'Compagna di stanza', atteso: 'Corretto: niente febbre né caduta per l\'ospite. Parser: falso allarme doppio (sono della compagna)',
+    text: 'La compagna di stanza stanotte ha avuto febbre 38.4 ed è caduta andando in bagno. La sig.ra Rossi si è svegliata spaventata ma sta bene, apiretica, ha riposato. PA 130/80.' },
+  { gruppo: 'trappola', id: 'trap-c', n: 'C', label: 'Piaga guarita', atteso: 'Corretto: oggi né lesione né dolore. Parser: propone due schede inutili',
+    text: 'La piaga sacrale è guarita, cute integra e ben irrorata. Il dolore all\'anca è scomparso dopo la terapia delle 8. Prosegue riposizionamento ogni 3 ore. PA 120/70 FC 72.' },
+  { gruppo: 'trappola', id: 'trap-d', n: 'D', label: 'Chiama la madre', atteso: 'Corretto: sospetto delirium fluttuante. Parser: tutto verde',
+    text: 'Stanotte chiamava la madre, morta da anni, e voleva vestirsi per andare a lavorare in fabbrica. Stamattina invece era lucido, ha fatto colazione e chiacchierato con la figlia. PA 140/85 FC 90.' },
+  { gruppo: 'trappola', id: 'trap-e', n: 'E', label: '"Sono solo un peso"', atteso: 'Corretto: ideazione di morte, avvisa il medico. Parser: tutto verde',
+    text: 'Oggi molto silenzioso, ha lasciato metà pranzo. Alla figlia ha detto che ormai è solo un peso e che sarebbe meglio addormentarsi e non svegliarsi più. PA 130/80, apiretico.' },
+  { gruppo: 'trappola', id: 'trap-f', n: 'F', label: 'Grida all\'igiene', atteso: 'Corretto: dolore da segni comportamentali (PAINAD). Parser: tutto verde',
+    text: 'Durante l\'igiene grida e si irrigidisce quando le muovo la gamba destra, poi si calma. Non riesce a dire cosa sente. PA 150/90 FC 96.' },
+  { gruppo: 'trappola', id: 'trap-g', n: 'G', label: 'Tocca appena la minestra', atteso: 'Corretto: introito ridotto, scheda nutrizionale. Parser: legge solo il peso',
+    text: 'Non si può dire che abbia pranzato: ha toccato appena la minestra e lasciato il secondo. Beve solo se sollecitata. Peso 51 kg.' },
+  { gruppo: 'trappola', id: 'trap-h', n: 'H', label: 'PA ieri e oggi', atteso: 'Controllo di onestà: PA attuale 128/76. Il parser mostra 190/100 e Jev non corregge i numeri',
+    text: 'PA ieri sera 190/100, stamattina 128/76 dopo la terapia. Nessun sintomo, tranquilla.' },
 ];

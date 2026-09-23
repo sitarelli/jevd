@@ -24,6 +24,7 @@ export default function Page() {
   const [focus, setFocus] = useState<Span | null>(null);
   const [showRaw, setShowRaw] = useState(false);
   const [compareMock, setCompareMock] = useState(true);
+  const [gruppo, setGruppo] = useState<'alert' | 'trappola'>('alert');
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   // Stato configurazione server (chiave presente?) senza chiamare il Gateway
@@ -169,53 +170,69 @@ export default function Page() {
       <main className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-12">
         {/* Colonna diario */}
         <section className="lg:col-span-5">
-          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm lg:sticky lg:top-6">
-            <div className="border-b border-slate-100 px-4 py-3">
+          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm lg:sticky lg:top-6 lg:h-[calc(100vh-8.5rem)] lg:min-h-[500px]">
+            <div className="shrink-0 border-b border-slate-100 px-4 py-2.5">
               <h2 className="text-sm font-semibold text-slate-900">Diario assistenziale</h2>
               <p className="text-xs text-slate-500">Scrivi o detta liberamente: il parser legge i numeri, Jev valuta i rischi.</p>
             </div>
 
-            <div className="px-4 pt-3">
-              <label htmlFor="esempi" className="text-xs font-medium text-slate-600">Esempi pronti</label>
-              <div id="esempi" className="mt-1.5 flex flex-wrap gap-1.5">
-                {ESEMPI.map((ex) => (
+            <div className="shrink-0 px-4 pt-2.5">
+              <div role="tablist" aria-label="Gruppi di esempi" className="flex items-center gap-1 rounded-lg bg-slate-100 p-0.5 text-xs">
+                {([['alert', 'Demo alert (1-8)'], ['trappola', 'Jev vs parser (A-H)']] as const).map(([g, l]) => (
+                  <button key={g} role="tab" aria-selected={gruppo === g} onClick={() => setGruppo(g)}
+                    className={`flex-1 rounded-md px-2 py-1 font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500 ${gruppo === g ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}>
+                    {l}
+                  </button>
+                ))}
+              </div>
+              <div id="esempi" className="mt-2 flex flex-wrap gap-1">
+                {ESEMPI.filter((ex) => ex.gruppo === gruppo).map((ex) => (
                   <button
                     key={ex.id}
                     onClick={() => { setDiary(ex.text); taRef.current?.focus(); }}
-                    title={`Atteso: ${ex.atteso}`}
-                    className={`inline-flex items-center gap-1.5 rounded-full border py-1 pl-1 pr-2.5 text-xs outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500 ${diary === ex.text ? 'border-blue-300 bg-blue-50 text-blue-800' : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white'}`}
+                    title={ex.atteso}
+                    className={`inline-flex items-center gap-1 rounded-full border py-0.5 pl-0.5 pr-2 text-xs outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500 ${diary === ex.text ? 'border-blue-300 bg-blue-50 text-blue-800' : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white'}`}
                   >
                     <span className={`grid h-5 min-w-[20px] place-items-center rounded-full px-1 text-[10px] font-semibold tabular ${diary === ex.text ? 'bg-blue-700 text-white' : 'bg-slate-200 text-slate-700'}`}>{ex.n}</span>
                     {ex.label}
                   </button>
                 ))}
               </div>
-              {(() => { const cur = ESEMPI.find((e) => e.text === diary); return cur ? <p className="mt-2 text-xs text-slate-500">Atteso: {cur.atteso}</p> : null; })()}
-              <button
-                onClick={runCompare}
-                disabled={loading}
-                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm font-semibold text-blue-800 outline-none transition hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50"
-              >
-                Confronta 4A e 4B: stessa PA 135/90, allarme diverso
-              </button>
+              {(() => {
+                const cur = ESEMPI.find((e) => e.text === diary);
+                return (
+                  <p className="mt-1.5 min-h-[16px] text-xs leading-snug text-slate-500">
+                    {cur ? (cur.gruppo === 'trappola' ? cur.atteso : `Atteso: ${cur.atteso}`) : gruppo === 'trappola' ? 'Analizza ogni testo prima in Simulazione locale (il parser) e poi con Jev.' : ''}
+                  </p>
+                );
+              })()}
+              {gruppo === 'alert' && (
+                <button
+                  onClick={runCompare}
+                  disabled={loading}
+                  className="mt-1.5 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-800 outline-none transition hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-500 disabled:opacity-50"
+                >
+                  Confronta 4A e 4B: stessa PA 135/90, allarme diverso
+                </button>
+              )}
             </div>
 
-            <div className="p-4">
-              <div className={`rounded-xl border transition ${listening ? 'border-rose-300 ring-4 ring-rose-100' : 'border-slate-200 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100'}`}>
+            <div className="flex min-h-0 flex-1 flex-col px-4 pb-3 pt-2.5">
+              <div className={`flex min-h-0 flex-1 flex-col rounded-xl border transition ${listening ? 'border-rose-300 ring-4 ring-rose-100' : 'border-slate-200 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-100'}`}>
                 <textarea
                   ref={taRef}
                   value={diary}
                   onChange={(e) => setDiary(e.target.value)}
                   onKeyDown={onKeyDown}
-                  rows={10}
+                  rows={4}
                   aria-label="Testo del diario"
                   placeholder="Es. Paziente vigile, PA 130/80, FC 78, sat 97%, dolore 2/10…"
-                  className="block w-full resize-y rounded-t-xl bg-transparent px-3 py-3 text-[15px] leading-relaxed text-slate-800 outline-none placeholder:text-slate-400"
+                  className="block min-h-[88px] w-full flex-1 resize-none rounded-t-xl bg-transparent px-3 py-2.5 text-[15px] leading-relaxed text-slate-800 outline-none placeholder:text-slate-400"
                 />
                 {listening && (
-                  <p className="px-3 pb-2 text-sm italic text-slate-400" aria-live="polite">{mic.interim || 'In ascolto…'}</p>
+                  <p className="shrink-0 px-3 pb-2 text-sm italic text-slate-400" aria-live="polite">{mic.interim || 'In ascolto…'}</p>
                 )}
-                <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 px-2 py-2">
+                <div className="flex shrink-0 flex-wrap items-center gap-2 border-t border-slate-100 px-2 py-1.5">
                   <button
                     onClick={mic.toggle}
                     disabled={mic.supported === false}
@@ -228,15 +245,15 @@ export default function Page() {
                   <button onClick={() => setDiary('')} className="rounded-lg px-2.5 py-1.5 text-sm text-slate-500 outline-none hover:bg-slate-100 hover:text-slate-800 focus-visible:ring-2 focus-visible:ring-blue-500">
                     Svuota
                   </button>
-                  <span className="ml-auto pr-1 text-xs text-slate-400 tabular">{diary.length} caratteri</span>
+                  <span className="ml-auto pr-1 text-xs text-slate-400 tabular" title="Ctrl + Invio per analizzare">{diary.length} caratteri</span>
                 </div>
               </div>
 
               {mic.supported === false && (
-                <p className="mt-2 text-xs text-slate-500">Dettatura non disponibile in questo browser. Usa Chrome, Edge o Safari, oppure il microfono della tastiera del telefono.</p>
+                <p className="mt-1.5 shrink-0 text-xs text-slate-500">Dettatura non disponibile in questo browser. Usa Chrome, Edge o Safari, oppure il microfono della tastiera del telefono.</p>
               )}
               {mic.error && (
-                <div role="alert" className="mt-2 flex items-start gap-2 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-900">
+                <div role="alert" className="mt-1.5 flex shrink-0 items-start gap-2 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-900">
                   <span className="flex-1">{mic.error}</span>
                   <button onClick={mic.clearError} className="font-medium underline">Chiudi</button>
                 </div>
@@ -245,12 +262,11 @@ export default function Page() {
               <button
                 onClick={() => analyze()}
                 disabled={loading}
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-3 text-sm font-semibold text-white shadow-sm outline-none transition hover:bg-blue-800 focus-visible:ring-4 focus-visible:ring-blue-200 disabled:bg-blue-400"
+                className="mt-2.5 inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm outline-none transition hover:bg-blue-800 focus-visible:ring-4 focus-visible:ring-blue-200 disabled:bg-blue-400"
               >
                 {loading && <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />}
                 {loading ? 'Analisi in corso…' : mode === 'jev' ? 'Analizza con Jev' : 'Analizza (simulazione)'}
               </button>
-              <p className="mt-2 text-center text-[11px] text-slate-400">Ctrl + Invio per analizzare</p>
             </div>
           </div>
         </section>
