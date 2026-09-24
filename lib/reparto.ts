@@ -2,9 +2,12 @@ import REPARTO from '../data/mock-reparto-20-ospiti.json';
 import { QUESTION_BY_ID, RSA_QUESTIONS } from './jev-questions';
 import { buildReport, mockAnalyze, type AnalysisResult, type Answers } from './clinical';
 
-export type Diario = { id: string; ospite_id: string; data: string; ora: string; autore: string; testo: string; tipo_template: string };
+export type Diario = { id: string; ospite_id: string; data: string; ora: string; autore: string; ruolo?: string; testo: string; tipo_template: string };
 export type Ospite = { id: string; nome: string; cognome: string; eta: number; stanza: string; nucleo: number; diari: Diario[] };
 export const OSPITI = REPARTO as Ospite[];
+/** Copia modificabile (le modifiche fatte nella demo restano nella sessione del browser). */
+export const cloneOspiti = (): Ospite[] => OSPITI.map((o) => ({ ...o, diari: o.diari.map((d) => ({ ...d })) }));
+export const TESTO_ORIGINALE: Record<string, string> = Object.fromEntries(OSPITI.flatMap((o) => o.diari.map((d) => [d.id, d.testo])));
 
 export const ts = (d: Diario) => new Date(`${d.data}T${d.ora}:00`).getTime();
 

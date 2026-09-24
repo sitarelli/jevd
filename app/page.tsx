@@ -142,7 +142,7 @@ export default function Page() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <div className="grid h-9 w-9 place-items-center rounded-lg bg-blue-900 text-white" aria-hidden>
-              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
+              {view === 'reparto' ? <IconReparto className="h-5 w-5" /> : <IconOspite className="h-5 w-5" />}
             </div>
             <div>
               <h1 className="text-base font-semibold leading-tight text-slate-900">Diario clinico</h1>
@@ -163,7 +163,7 @@ export default function Page() {
                   onClick={() => { if (mic.state === 'listening') mic.stop(); setView(v); }}
                   className={`rounded-md px-3 py-1.5 font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500 ${view === v ? 'bg-blue-700 text-white shadow-sm' : 'text-blue-800 hover:bg-blue-100'}`}
                 >
-                  {label}
+                  <span className="inline-flex items-center gap-1.5">{v === 'reparto' ? <IconReparto className="h-4 w-4" /> : <IconOspite className="h-4 w-4" />}{label}</span>
                 </button>
               ))}
             </div>
@@ -400,5 +400,25 @@ export default function Page() {
       </main>
       )}
     </div>
+  );
+}
+
+function IconOspite({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" />
+    </svg>
+  );
+}
+
+function IconReparto({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M4 20V8l8-4 8 4v12" />
+      <path d="M3 20h18" />
+      <path d="M10 20v-4h4v4" />
+      <path d="M8 10.5h2M14 10.5h2M8 13.5h2M14 13.5h2" />
+    </svg>
   );
 }

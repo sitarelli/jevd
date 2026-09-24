@@ -3,7 +3,7 @@
 Infermieri e OSS scrivono o dettano il diario. Il parser legge i numeri (righello), Jev valuta 38 rischi
 clinico-assistenziali con probabilità calibrate (cane da tartufo) e propone le schede dedicate.
 
-**Documentazione completa:** [`docs/OBIETTIVO_PROGETTO_RSA.md`](docs/OBIETTIVO_PROGETTO_RSA.md)
+**Presentazione del progetto:** [`docs/OBIETTIVO_PROGETTO_RSA.md`](docs/OBIETTIVO_PROGETTO_RSA.md) · **Note tecniche:** [`docs/NOTE_TECNICHE.md`](docs/NOTE_TECNICHE.md)
 
 ## Chiave API (solo su Vercel)
 
