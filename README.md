@@ -34,6 +34,8 @@ il server risponde `MISSING_KEY` e la UI ripiega sulla simulazione avvisandoti).
 - `lib/parser.ts`: il righello (PA anche senza slash: "90 135" → 135/90).
 - `lib/clinical.ts`: simulazione a keyword, soglie per domanda, report, esempi pronti.
 - `app/api/analyze/route.ts`: runtime Node, timeout 10 s, Zero Data Retention.
+- `components/RepartoView.tsx` + `lib/reparto.ts`: vista **Diari di reparto** (20 ospiti, filtri, classifica per urgency score). Dati in `data/mock-reparto-20-ospiti.json`.
+- `lib/useDictation.ts` + `lib/dictationMerge.ts`: dettatura con fix anti-duplicati per mobile.
 - `app/scheda/[tipo]`: 11 schede dimostrative raggiungibili come `/scheda-cadute?source=jev` (rewrite in `next.config.js`).
 
 La simulazione locale è il default. "Jev via Gateway" è opzionale e richiede la chiave.

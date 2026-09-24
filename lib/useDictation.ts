@@ -1,5 +1,6 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createTranscriptMerger, isMobileDevice } from './dictationMerge';
 
 /**
  * Dettatura con Web Speech API (Chrome, Edge, Safari).
@@ -36,69 +37,90 @@ export function useDictation(onFinal: (text: string) => void) {
   const [interim, setInterim] = useState('');
   const [error, setError] = useState<string | null>(null);
   const recRef = useRef<any>(null);
-  const wantRef = useRef(false);
+  const isRecording = useRef(false);            // true solo finché l'utente non preme Ferma
+  const mobileRef = useRef(false);
+  const mergerRef = useRef(createTranscriptMerger({ debounceMs: 800 }));
   const onFinalRef = useRef(onFinal);
   onFinalRef.current = onFinal;
 
   useEffect(() => {
     const w = window as any;
+    // iOS Safari espone webkitSpeechRecognition, Chrome Android entrambi i nomi
     setSupported(!!(w.SpeechRecognition || w.webkitSpeechRecognition));
-    return () => { wantRef.current = false; try { recRef.current?.abort(); } catch {} };
+    mobileRef.current = isMobileDevice();
+    return () => { isRecording.current = false; try { recRef.current?.abort(); } catch {} };
   }, []);
 
-  const start = useCallback(() => {
+  const createRecognition = useCallback(() => {
     const w = window as any;
     const SR = w.SpeechRecognition || w.webkitSpeechRecognition;
-    if (!SR) { setError('Questo browser non supporta la dettatura. Usa Chrome, Edge o Safari, oppure la dettatura della tastiera del telefono.'); setState('error'); return; }
-    if (!window.isSecureContext) { setError('La dettatura richiede HTTPS. Apri la versione pubblicata su Vercel.'); setState('error'); return; }
-
     const rec = new SR();
+    const mobile = mobileRef.current;
     rec.lang = 'it-IT';
-    rec.continuous = true;
-    rec.interimResults = true;
+    // Mobile: una frase per sessione, solo risultati finali (è la causa principale dei doppioni).
+    // Desktop: sessione continua con anteprima dei risultati parziali.
+    rec.continuous = !mobile;
+    rec.interimResults = !mobile;
     rec.maxAlternatives = 1;
 
-    rec.onstart = () => { setState('listening'); setError(null); };
+    rec.onstart = () => { mergerRef.current.newSession(); setState('listening'); setError(null); };
     rec.onresult = (ev: any) => {
       let live = '';
       for (let i = ev.resultIndex; i < ev.results.length; i++) {
         const r = ev.results[i];
-        if (r.isFinal) onFinalRef.current(normalizeDictation(r[0].transcript.trim()));
-        else live += r[0].transcript;
+        if (r.isFinal) {
+          const text = mergerRef.current.push(i, normalizeDictation(r[0].transcript), Date.now());
+          if (text) onFinalRef.current(text);
+        } else {
+          live += r[0].transcript;
+        }
       }
       setInterim(live);
     };
     rec.onerror = (ev: any) => {
       const code = ev?.error || 'unknown';
-      if (code === 'no-speech' && wantRef.current) return; // Chrome: pausa lunga, si riavvia da solo
-      if (code === 'not-allowed' || code === 'service-not-allowed' || code === 'audio-capture') wantRef.current = false;
+      if ((code === 'no-speech' || code === 'aborted') && isRecording.current) return; // pausa: si riprende in onend
+      if (code === 'not-allowed' || code === 'service-not-allowed' || code === 'audio-capture') isRecording.current = false;
       const msg = ERROR_TEXT[code] ?? `Errore dettatura: ${code}`;
       if (msg) { setError(msg); setState('error'); }
     };
     rec.onend = () => {
       setInterim('');
-      if (wantRef.current) {
-        // Chrome chiude la sessione dopo qualche secondo di silenzio: la riapriamo.
-        try { rec.start(); return; } catch {}
-      }
-      setState((s) => (s === 'error' ? s : 'idle'));
+      if (!isRecording.current) { setState((s) => (s === 'error' ? s : 'idle')); return; } // l'utente ha fermato: niente riavvio
+      // Ancora in registrazione: riapre la sessione (su mobile dopo ogni frase, su desktop dopo il silenzio)
+      setTimeout(() => {
+        if (!isRecording.current) return;
+        try { rec.start(); } catch { isRecording.current = false; setState('idle'); }
+      }, mobile ? 250 : 0);
     };
-
-    recRef.current = rec;
-    wantRef.current = true;
-    setState('starting');
-    try { rec.start(); } catch (e: any) { setError(e?.message || 'Impossibile avviare la dettatura'); setState('error'); wantRef.current = false; }
+    return rec;
   }, []);
 
+  const start = useCallback(() => {
+    const w = window as any;
+    if (!(w.SpeechRecognition || w.webkitSpeechRecognition)) { setError('Questo browser non supporta la dettatura. Usa Chrome, Edge o Safari, oppure la dettatura della tastiera del telefono.'); setState('error'); return; }
+    if (!window.isSecureContext) { setError('La dettatura richiede HTTPS. Apri la versione pubblicata su Vercel.'); setState('error'); return; }
+    if (isRecording.current) return;               // evita doppio avvio con doppio tap
+    try { recRef.current?.abort(); } catch {}
+    const rec = createRecognition();
+    recRef.current = rec;
+    isRecording.current = true;
+    setState('starting');
+    try { rec.start(); } catch (e: any) { setError(e?.message || 'Impossibile avviare la dettatura'); setState('error'); isRecording.current = false; }
+  }, [createRecognition]);
+
   const stop = useCallback(() => {
-    wantRef.current = false;
+    isRecording.current = false;
     try { recRef.current?.stop(); } catch {}
     setState('idle');
   }, []);
 
   const toggle = useCallback(() => {
-    if (state === 'listening' || state === 'starting') stop(); else start();
-  }, [state, start, stop]);
+    if (isRecording.current) stop(); else start();
+  }, [start, stop]);
 
-  return { supported, state, interim, error, start, stop, toggle, clearError: () => setError(null) };
+  /** Da chiamare quando la textarea viene svuotata, così il controllo anti-duplicati riparte da zero. */
+  const resetTranscript = useCallback(() => mergerRef.current.reset(), []);
+
+  return { supported, state, interim, error, start, stop, toggle, resetTranscript, clearError: () => setError(null) };
 }

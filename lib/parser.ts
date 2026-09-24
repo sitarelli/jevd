@@ -149,7 +149,7 @@ export function parseDiary(raw: string): ParsedDiary {
   const fc = firstMatch(
     text,
     [
-      /\b(?:FC|F\.C\.|frequenza\s+cardiaca|frequenza(?!\s+respiratoria)|polso|battiti)\b[^\d\n]{0,14}(\d{2,3})/i,
+      /\b(?:FC|F\.C\.|frequenza\s+cardiaca|frequenza(?!\s+respiratoria)|polso|battiti|tachicardic[oa]|bradicardic[oa])\b[^\d\n]{0,14}(\d{2,3})/i,
       /(\d{2,3})\s*(?:bpm|battiti)/i,
     ],
     20,

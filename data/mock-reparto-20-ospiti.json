@@ -1,0 +1,689 @@
+[
+ {
+  "id": "ospite_01",
+  "nome": "Maria",
+  "cognome": "Rossi",
+  "eta": 84,
+  "stanza": "12A",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d001",
+    "ospite_id": "ospite_01",
+    "data": "2026-09-21",
+    "ora": "10:05",
+    "autore": "Inf. Rossi",
+    "testo": "ospite a letto, PA 135/90, FC 88, sat 96% in aria, apiretico 36.6, tranquillo, collabora",
+    "tipo_template": "stabile"
+   },
+   {
+    "id": "d002",
+    "ospite_id": "ospite_01",
+    "data": "2026-09-22",
+    "ora": "04:20",
+    "autore": "OSS Bianchi",
+    "testo": "a letto, PA 125/80 FC 80 sat 96%, apiretico, collabora, nessuna lamentela",
+    "tipo_template": "stabile"
+   },
+   {
+    "id": "d003",
+    "ospite_id": "ospite_01",
+    "data": "2026-09-23",
+    "ora": "08:15",
+    "autore": "OSS Bianchi",
+    "testo": "a letto, PA 125/80 FC 80 sat 96%, apiretico, collabora, nessuna lamentela",
+    "tipo_template": "stabile"
+   }
+  ]
+ },
+ {
+  "id": "ospite_02",
+  "nome": "Giuseppe",
+  "cognome": "Bianchi",
+  "eta": 87,
+  "stanza": "12B",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d004",
+    "ospite_id": "ospite_02",
+    "data": "2026-09-21",
+    "ora": "22:10",
+    "autore": "OSS Verdi",
+    "testo": "a letto, PA 125/80 FC 80 sat 96%, apiretico, collabora, nessuna lamentela",
+    "tipo_template": "stabile"
+   },
+   {
+    "id": "d005",
+    "ospite_id": "ospite_02",
+    "data": "2026-09-22",
+    "ora": "22:10",
+    "autore": "Inf. Rossi",
+    "testo": "scivolato in corridoio, caduta a terra, non trauma cranico, si rialza con aiuto, PA 128/78 FC 84",
+    "tipo_template": "caduta_lieve"
+   },
+   {
+    "id": "d006",
+    "ospite_id": "ospite_02",
+    "data": "2026-09-23",
+    "ora": "10:05",
+    "autore": "Inf. Rossi",
+    "testo": "PA 130/82 FC 76 sat 97% apiretico, dormito bene, appetito conservato, tranquillo",
+    "tipo_template": "stabile"
+   }
+  ]
+ },
+ {
+  "id": "ospite_03",
+  "nome": "Anna",
+  "cognome": "Verdi",
+  "eta": 79,
+  "stanza": "13A",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d007",
+    "ospite_id": "ospite_03",
+    "data": "2026-09-21",
+    "ora": "04:20",
+    "autore": "Inf. Rossi",
+    "testo": "PA 130/82 FC 76 sat 97% apiretico, dormito bene, appetito conservato, tranquillo",
+    "tipo_template": "stabile"
+   },
+   {
+    "id": "d008",
+    "ospite_id": "ospite_03",
+    "data": "2026-09-22",
+    "ora": "08:15",
+    "autore": "OSS Colombo",
+    "testo": "a letto, PA 125/80 FC 80 sat 96%, apiretico, collabora, nessuna lamentela",
+    "tipo_template": "stabile"
+   },
+   {
+    "id": "d009",
+    "ospite_id": "ospite_03",
+    "data": "2026-09-23",
+    "ora": "08:15",
+    "autore": "OSS Verdi",
+    "testo": "trovato a terra in bagno stamattina ore 4, non ricorda caduta, ora non carica arto dx, gamba accorciata, dolore anca 8/10, pallido sudato",
+    "tipo_template": "frattura"
+   }
+  ]
+ },
+ {
+  "id": "ospite_04",
+  "nome": "Luigi",
+  "cognome": "Ferrari",
+  "eta": 91,
+  "stanza": "13B",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d010",
+    "ospite_id": "ospite_04",
+    "data": "2026-09-21",
+    "ora": "08:15",
+    "autore": "OSS Verdi",
+    "testo": "a letto, PA 125/80 FC 80 sat 96%, apiretico, collabora, nessuna lamentela",
+    "tipo_template": "stabile"
+   },
+   {
+    "id": "d011",
+    "ospite_id": "ospite_04",
+    "data": "2026-09-22",
+    "ora": "08:15",
+    "autore": "OSS Verdi",
+    "testo": "confuso fluttuante, vede persone che non ci sono, agitazione, non dormito stanotte",
+    "tipo_template": "delirium"
+   },
+   {
+    "id": "d012",
+    "ospite_id": "ospite_04",
+    "data": "2026-09-23",
+    "ora": "22:10",
+    "autore": "OSS Verdi",
+    "testo": "ieri febbre 38.5 con tosse, oggi 36.6 nega febbre, apiretico, PA 125/80 FC 78 sat 96%",
+    "tipo_template": "febbre_ieri"
+   }
+  ]
+ },
+ {
+  "id": "ospite_05",
+  "nome": "Rosa",
+  "cognome": "Esposito",
+  "eta": 85,
+  "stanza": "14A",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d013",
+    "ospite_id": "ospite_05",
+    "data": "2026-09-21",
+    "ora": "04:20",
+    "autore": "Inf. Rossi",
+    "testo": "apiretico, nega dolore, nega caduta, dormito bene, collabora",
+    "tipo_template": "negazioni"
+   },
+   {
+    "id": "d014",
+    "ospite_id": "ospite_05",
+    "data": "2026-09-22",
+    "ora": "14:30",
+    "autore": "OSS Colombo",
+    "testo": "a letto, PA 125/80 FC 80 sat 96%, apiretico, collabora, nessuna lamentela",
+    "tipo_template": "stabile"
+   },
+   {
+    "id": "d015",
+    "ospite_id": "ospite_05",
+    "data": "2026-09-23",
+    "ora": "22:10",
+    "autore": "Inf. Rossi",
+    "testo": "nega caduta, nega febbre, nega dolore, apiretico 36.5, PA 120/80 FC 70 sat 97%, tranquillo",
+    "tipo_template": "negazioni"
+   }
+  ]
+ },
+ {
+  "id": "ospite_06",
+  "nome": "Antonio",
+  "cognome": "Russo",
+  "eta": 88,
+  "stanza": "14B",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d016",
+    "ospite_id": "ospite_06",
+    "data": "2026-09-21",
+    "ora": "08:15",
+    "autore": "OSS Bianchi",
+    "testo": "a letto, PA 125/80 FC 80 sat 96%, apiretico, collabora, nessuna lamentela",
+    "tipo_template": "stabile"
+   },
+   {
+    "id": "d017",
+    "ospite_id": "ospite_06",
+    "data": "2026-09-23",
+    "ora": "04:20",
+    "autore": "Inf. Rossi",
+    "testo": "sudato, tachicardico 118, PA 85/55, sat 91%, pallido, dispnoico, confuso",
+    "tipo_template": "early_warning"
+   }
+  ]
+ },
+ {
+  "id": "ospite_07",
+  "nome": "Teresa",
+  "cognome": "Romano",
+  "eta": 82,
+  "stanza": "15A",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d018",
+    "ospite_id": "ospite_07",
+    "data": "2026-09-21",
+    "ora": "08:15",
+    "autore": "OSS Verdi",
+    "testo": "a letto, PA 125/80 FC 80 sat 96%, apiretico, collabora, nessuna lamentela",
+    "tipo_template": "stabile"
+   },
+   {
+    "id": "d019",
+    "ospite_id": "ospite_07",
+    "data": "2026-09-22",
+    "ora": "22:10",
+    "autore": "OSS Verdi",
+    "testo": "beve poco da 2gg, oliguria urine scarse concentrate, mucose secche, lesione sacrale stadio 1 arrossamento non sbiancante, PA 130/80",
+    "tipo_template": "disidratazione_lesione"
+   },
+   {
+    "id": "d020",
+    "ospite_id": "ospite_07",
+    "data": "2026-09-23",
+    "ora": "22:10",
+    "autore": "Inf. Rossi",
+    "testo": "beve poco da 2gg, oliguria urine scarse concentrate, mucose secche, lesione sacrale stadio 1 arrossamento non sbiancante, PA 130/80",
+    "tipo_template": "disidratazione_lesione"
+   }
+  ]
+ },
+ {
+  "id": "ospite_08",
+  "nome": "Giovanni",
+  "cognome": "Gallo",
+  "eta": 90,
+  "stanza": "15B",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d021",
+    "ospite_id": "ospite_08",
+    "data": "2026-09-21",
+    "ora": "04:20",
+    "autore": "OSS Colombo",
+    "testo": "PA 130/82 FC 76 sat 97% apiretico, dormito bene, appetito conservato, tranquillo",
+    "tipo_template": "stabile"
+   },
+   {
+    "id": "d022",
+    "ospite_id": "ospite_08",
+    "data": "2026-09-22",
+    "ora": "08:15",
+    "autore": "OSS Verdi",
+    "testo": "PA 130/82 FC 76 sat 97% apiretico, dormito bene, appetito conservato, tranquillo",
+    "tipo_template": "stabile"
+   }
+  ]
+ },
+ {
+  "id": "ospite_09",
+  "nome": "Elena",
+  "cognome": "Conti",
+  "eta": 81,
+  "stanza": "16A",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d023",
+    "ospite_id": "ospite_09",
+    "data": "2026-09-21",
+    "ora": "10:05",
+    "autore": "OSS Bianchi",
+    "testo": "ospite a letto, PA 135/90, FC 88, sat 96% in aria, apiretico 36.6, tranquillo, collabora",
+    "tipo_template": "tranquillo_4A"
+   },
+   {
+    "id": "d024",
+    "ospite_id": "ospite_09",
+    "data": "2026-09-22",
+    "ora": "08:15",
+    "autore": "OSS Colombo",
+    "testo": "PA 135/90 FC 88 sat 96% TC 36.6, pallido sudato, dice di svenire, confuso, agitato",
+    "tipo_template": "pallido_confuso_4B",
+    "nota_modifica": "Originale: FC 115 sat 94%. Portato a FC 88 sat 96% per avere gli stessi vitali del 4A."
+   }
+  ]
+ },
+ {
+  "id": "ospite_10",
+  "nome": "Franco",
+  "cognome": "Marino",
+  "eta": 86,
+  "stanza": "16B",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d025",
+    "ospite_id": "ospite_10",
+    "data": "2026-09-21",
+    "ora": "08:15",
+    "autore": "OSS Verdi",
+    "testo": "ospite a letto, PA 135/90, FC 88, sat 96% in aria, apiretico 36.6, tranquillo, collabora",
+    "tipo_template": "tranquillo_4A"
+   },
+   {
+    "id": "d026",
+    "ospite_id": "ospite_10",
+    "data": "2026-09-22",
+    "ora": "04:20",
+    "autore": "OSS Colombo",
+    "testo": "ospite a letto, PA 135/90, FC 88, sat 96% in aria, apiretico 36.6, tranquillo, collabora",
+    "tipo_template": "stabile"
+   }
+  ]
+ },
+ {
+  "id": "ospite_11",
+  "nome": "Luisa",
+  "cognome": "Barbieri",
+  "eta": 89,
+  "stanza": "17A",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d027",
+    "ospite_id": "ospite_11",
+    "data": "2026-09-21",
+    "ora": "08:15",
+    "autore": "Inf. Rossi",
+    "testo": "rifiuta terapia mattutina, sputa farmaci, agitazione, wandering in corridoio, non dormito",
+    "tipo_template": "bpsd_rifiuto"
+   },
+   {
+    "id": "d028",
+    "ospite_id": "ospite_11",
+    "data": "2026-09-22",
+    "ora": "14:30",
+    "autore": "Inf. Rossi",
+    "testo": "rifiuta terapia mattutina, sputa farmaci, agitazione, wandering in corridoio, non dormito",
+    "tipo_template": "bpsd_rifiuto"
+   },
+   {
+    "id": "d029",
+    "ospite_id": "ospite_11",
+    "data": "2026-09-23",
+    "ora": "10:05",
+    "autore": "OSS Verdi",
+    "testo": "PA 130/82 FC 76 sat 97% apiretico, dormito bene, appetito conservato, tranquillo",
+    "tipo_template": "stabile"
+   }
+  ]
+ },
+ {
+  "id": "ospite_12",
+  "nome": "Carlo",
+  "cognome": "Villa",
+  "eta": 83,
+  "stanza": "17B",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d030",
+    "ospite_id": "ospite_12",
+    "data": "2026-09-21",
+    "ora": "22:10",
+    "autore": "Inf. Rossi",
+    "testo": "stipsi, fecaloma, non evacua da 5gg, addome disteso, dolorabile",
+    "tipo_template": "globo_stipsi"
+   },
+   {
+    "id": "d031",
+    "ospite_id": "ospite_12",
+    "data": "2026-09-22",
+    "ora": "04:20",
+    "autore": "OSS Bianchi",
+    "testo": "ospite a letto, PA 135/90, FC 88, sat 96% in aria, apiretico 36.6, tranquillo, collabora",
+    "tipo_template": "stabile"
+   },
+   {
+    "id": "d032",
+    "ospite_id": "ospite_12",
+    "data": "2026-09-23",
+    "ora": "04:20",
+    "autore": "OSS Verdi",
+    "testo": "stipsi, fecaloma, non evacua da 5gg, addome disteso, dolorabile",
+    "tipo_template": "globo_stipsi"
+   }
+  ]
+ },
+ {
+  "id": "ospite_13",
+  "nome": "Angela",
+  "cognome": "Rizzo",
+  "eta": 80,
+  "stanza": "18A",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d033",
+    "ospite_id": "ospite_13",
+    "data": "2026-09-21",
+    "ora": "08:15",
+    "autore": "Inf. Rossi",
+    "testo": "dolore non controllato, NRS 7/10, terapia non efficace",
+    "tipo_template": "dolore"
+   },
+   {
+    "id": "d034",
+    "ospite_id": "ospite_13",
+    "data": "2026-09-22",
+    "ora": "22:10",
+    "autore": "OSS Bianchi",
+    "testo": "dolore non controllato, NRS 7/10, terapia non efficace",
+    "tipo_template": "dolore"
+   },
+   {
+    "id": "d035",
+    "ospite_id": "ospite_13",
+    "data": "2026-09-23",
+    "ora": "08:15",
+    "autore": "OSS Colombo",
+    "testo": "PA 130/82 FC 76 sat 97% apiretico, dormito bene, appetito conservato, tranquillo",
+    "tipo_template": "stabile"
+   }
+  ]
+ },
+ {
+  "id": "ospite_14",
+  "nome": "Mario",
+  "cognome": "Greco",
+  "eta": 92,
+  "stanza": "18B",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d036",
+    "ospite_id": "ospite_14",
+    "data": "2026-09-21",
+    "ora": "04:20",
+    "autore": "OSS Colombo",
+    "testo": "febbre 38.2, tosse produttiva, sat 91% in aria, dispnea, rantoli base dx, PA 130/80 FC 98",
+    "tipo_template": "infezione_resp"
+   },
+   {
+    "id": "d037",
+    "ospite_id": "ospite_14",
+    "data": "2026-09-22",
+    "ora": "08:15",
+    "autore": "OSS Bianchi",
+    "testo": "febbricola 37.8, tosse, sat 92%, urine torbide maleodoranti, bruciore",
+    "tipo_template": "infezione_resp"
+   },
+   {
+    "id": "d038",
+    "ospite_id": "ospite_14",
+    "data": "2026-09-23",
+    "ora": "10:05",
+    "autore": "OSS Colombo",
+    "testo": "PA 95/60 FC 110 sat 93% pallido sudato, ipoteso, deterioramento rispetto a ieri",
+    "tipo_template": "early_warning"
+   }
+  ]
+ },
+ {
+  "id": "ospite_15",
+  "nome": "Paola",
+  "cognome": "Moretti",
+  "eta": 78,
+  "stanza": "19A",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d039",
+    "ospite_id": "ospite_15",
+    "data": "2026-09-21",
+    "ora": "22:10",
+    "autore": "OSS Bianchi",
+    "testo": "trovato a terra in bagno, riferisce scivolato, nessuna lesione, PA 130/80 FC 82 sat 96%, un po' spaventato",
+    "tipo_template": "caduta_lieve"
+   },
+   {
+    "id": "d040",
+    "ospite_id": "ospite_15",
+    "data": "2026-09-22",
+    "ora": "04:20",
+    "autore": "OSS Verdi",
+    "testo": "spondine in atto, riposa, da rivalutare",
+    "tipo_template": "contenzione"
+   },
+   {
+    "id": "d041",
+    "ospite_id": "ospite_15",
+    "data": "2026-09-23",
+    "ora": "10:05",
+    "autore": "OSS Verdi",
+    "testo": "a letto, PA 125/80 FC 80 sat 96%, apiretico, collabora, nessuna lamentela",
+    "tipo_template": "stabile"
+   }
+  ]
+ },
+ {
+  "id": "ospite_16",
+  "nome": "Ugo",
+  "cognome": "Lombardi",
+  "eta": 88,
+  "stanza": "19B",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d042",
+    "ospite_id": "ospite_16",
+    "data": "2026-09-23",
+    "ora": "08:15",
+    "autore": "OSS Verdi",
+    "testo": "pallido sudato FC 115 sat 92% in aria, PA 90 135, dice di sentirsi svenire, TC 36.8, oliguria",
+    "tipo_template": "early_warning"
+   }
+  ]
+ },
+ {
+  "id": "ospite_17",
+  "nome": "Caterina",
+  "cognome": "Fontana",
+  "eta": 85,
+  "stanza": "20A",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d043",
+    "ospite_id": "ospite_17",
+    "data": "2026-09-21",
+    "ora": "22:10",
+    "autore": "OSS Colombo",
+    "testo": "apatico, isolato, non mangia, non parla, piange spesso, non partecipa attività",
+    "tipo_template": "depressione"
+   },
+   {
+    "id": "d044",
+    "ospite_id": "ospite_17",
+    "data": "2026-09-22",
+    "ora": "22:10",
+    "autore": "OSS Colombo",
+    "testo": "PA 130/82 FC 76 sat 97% apiretico, dormito bene, appetito conservato, tranquillo",
+    "tipo_template": "stabile"
+   },
+   {
+    "id": "d045",
+    "ospite_id": "ospite_17",
+    "data": "2026-09-23",
+    "ora": "14:30",
+    "autore": "Inf. Rossi",
+    "testo": "apatico, isolato, non mangia, non parla, piange spesso, non partecipa attività",
+    "tipo_template": "depressione"
+   }
+  ]
+ },
+ {
+  "id": "ospite_18",
+  "nome": "Sergio",
+  "cognome": "Colombo",
+  "eta": 84,
+  "stanza": "20B",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d046",
+    "ospite_id": "ospite_18",
+    "data": "2026-09-21",
+    "ora": "10:05",
+    "autore": "OSS Bianchi",
+    "testo": "tosse ai pasti, ristagno, disfagia per liquidi, rischio ab ingestis",
+    "tipo_template": "disfagia"
+   },
+   {
+    "id": "d047",
+    "ospite_id": "ospite_18",
+    "data": "2026-09-22",
+    "ora": "10:05",
+    "autore": "OSS Bianchi",
+    "testo": "PA 130/82 FC 76 sat 97% apiretico, dormito bene, appetito conservato, tranquillo",
+    "tipo_template": "stabile"
+   },
+   {
+    "id": "d048",
+    "ospite_id": "ospite_18",
+    "data": "2026-09-23",
+    "ora": "10:05",
+    "autore": "Inf. Rossi",
+    "testo": "tosse ai pasti, ristagno, disfagia per liquidi, rischio ab ingestis",
+    "tipo_template": "disfagia"
+   }
+  ]
+ },
+ {
+  "id": "ospite_19",
+  "nome": "Bruna",
+  "cognome": "Martini",
+  "eta": 90,
+  "stanza": "21A",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d049",
+    "ospite_id": "ospite_19",
+    "data": "2026-09-21",
+    "ora": "14:30",
+    "autore": "OSS Bianchi",
+    "testo": "vede persone in stanza, parla da solo, canta come un matto stanotte, euforia incongrua",
+    "tipo_template": "allucinazione"
+   },
+   {
+    "id": "d050",
+    "ospite_id": "ospite_19",
+    "data": "2026-09-22",
+    "ora": "14:30",
+    "autore": "OSS Bianchi",
+    "testo": "da ieri confuso, non riconosce nipote, agitazione notturna, inversione ritmo sonno-veglia, PA 138/85 FC 92",
+    "tipo_template": "delirium"
+   },
+   {
+    "id": "d051",
+    "ospite_id": "ospite_19",
+    "data": "2026-09-23",
+    "ora": "22:10",
+    "autore": "OSS Colombo",
+    "testo": "ospite a letto, PA 135/90, FC 88, sat 96% in aria, apiretico 36.6, tranquillo, collabora",
+    "tipo_template": "stabile"
+   }
+  ]
+ },
+ {
+  "id": "ospite_20",
+  "nome": "Aldo",
+  "cognome": "Marchetti",
+  "eta": 87,
+  "stanza": "21B",
+  "nucleo": 2,
+  "diari": [
+   {
+    "id": "d052",
+    "ospite_id": "ospite_20",
+    "data": "2026-09-21",
+    "ora": "10:05",
+    "autore": "OSS Verdi",
+    "testo": "nega caduta, nega febbre, apiretico oggi 36.6, ieri 38.5 con tosse",
+    "tipo_template": "parser_trap"
+   },
+   {
+    "id": "d053",
+    "ospite_id": "ospite_20",
+    "data": "2026-09-22",
+    "ora": "08:15",
+    "autore": "Inf. Rossi",
+    "testo": "nega caduta, nega febbre, apiretico oggi 36.6, ieri 38.5 con tosse",
+    "tipo_template": "parser_trap"
+   },
+   {
+    "id": "d054",
+    "ospite_id": "ospite_20",
+    "data": "2026-09-23",
+    "ora": "04:20",
+    "autore": "OSS Colombo",
+    "testo": "ospite a letto, PA 135/90, FC 88, sat 96% in aria, apiretico 36.6, tranquillo, collabora",
+    "tipo_template": "stabile"
+   }
+  ]
+ }
+]

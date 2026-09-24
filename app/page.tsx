@@ -5,6 +5,8 @@ import type { Span } from '../lib/parser';
 import { useDictation } from '../lib/useDictation';
 import { ReportView, EvidenceText } from '../components/ReportView';
 import { CompareView } from '../components/CompareView';
+import RepartoView from '../components/RepartoView';
+import type { Ospite, Diario } from '../lib/reparto';
 
 type Mode = 'mock' | 'jev';
 type ApiError = { code: string; message: string; details?: unknown; status?: number };
@@ -25,6 +27,8 @@ export default function Page() {
   const [showRaw, setShowRaw] = useState(false);
   const [compareMock, setCompareMock] = useState(true);
   const [gruppo, setGruppo] = useState<'alert' | 'trappola'>('alert');
+  const [view, setView] = useState<'ospite' | 'reparto'>('ospite');
+  const [ospite, setOspite] = useState({ nome: 'Berti Romano', stanza: '12', nucleo: 2 });
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   // Stato configurazione server (chiave presente?) senza chiamare il Gateway
@@ -142,7 +146,7 @@ export default function Page() {
             </div>
             <div>
               <h1 className="text-base font-semibold leading-tight text-slate-900">Diario clinico</h1>
-              <p className="text-xs text-slate-500">RSA, nucleo 2, camera 12 (ospite dimostrativo)</p>
+              <p className="text-xs text-slate-500">{view === 'reparto' ? 'RSA, nucleo 2: diari di reparto' : `${ospite.nome}, nucleo ${ospite.nucleo}, stanza ${ospite.stanza}`}</p>
             </div>
           </div>
 
@@ -150,6 +154,19 @@ export default function Page() {
             <span className="hidden text-xs text-slate-500 md:inline">
               {server == null ? 'Verifica configurazione…' : server.keyConfigured ? 'Chiave Gateway configurata' : 'Chiave Gateway assente: disponibile solo la simulazione'}
             </span>
+            <div role="radiogroup" aria-label="Vista" className="inline-flex rounded-lg bg-blue-50 p-1 text-sm">
+              {([['ospite', 'Diario ospite'], ['reparto', 'Diari di reparto']] as ['ospite' | 'reparto', string][]).map(([v, label]) => (
+                <button
+                  key={v}
+                  role="radio"
+                  aria-checked={view === v}
+                  onClick={() => { if (mic.state === 'listening') mic.stop(); setView(v); }}
+                  className={`rounded-md px-3 py-1.5 font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-blue-500 ${view === v ? 'bg-blue-700 text-white shadow-sm' : 'text-blue-800 hover:bg-blue-100'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
             <div role="radiogroup" aria-label="Motore di estrazione" className="inline-flex rounded-lg bg-slate-100 p-1 text-sm">
               {([['mock', 'Simulazione locale'], ['jev', 'Jev via Gateway']] as [Mode, string][]).map(([m, label]) => (
                 <button
@@ -167,12 +184,24 @@ export default function Page() {
         </div>
       </header>
 
+      {view === 'reparto' && (
+        <RepartoView
+          mode={mode}
+          onOpen={(o: Ospite, d: Diario) => {
+            setOspite({ nome: `${o.cognome} ${o.nome}`, stanza: o.stanza, nucleo: o.nucleo });
+            setDiary(d.testo); setResult(null); setError(null); setCompare(null); mic.resetTranscript();
+            setView('ospite');
+          }}
+        />
+      )}
+
+      {view === 'ospite' && (
       <main className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-12">
         {/* Colonna diario */}
         <section className="lg:col-span-5">
           <div className="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm lg:sticky lg:top-6 lg:h-[calc(100vh-8.5rem)] lg:min-h-[500px]">
             <div className="shrink-0 border-b border-slate-100 px-4 py-2.5">
-              <h2 className="text-sm font-semibold text-slate-900">Diario assistenziale</h2>
+              <h2 className="text-sm font-semibold text-slate-900">Diario assistenziale: {ospite.nome}</h2>
               <p className="text-xs text-slate-500">Scrivi o detta liberamente: il parser legge i numeri, Jev valuta i rischi.</p>
             </div>
 
@@ -242,7 +271,7 @@ export default function Page() {
                   >
                     {listening ? '■ Ferma dettatura' : '🎙️ Detta con microfono'}
                   </button>
-                  <button onClick={() => setDiary('')} className="rounded-lg px-2.5 py-1.5 text-sm text-slate-500 outline-none hover:bg-slate-100 hover:text-slate-800 focus-visible:ring-2 focus-visible:ring-blue-500">
+                  <button onClick={() => { setDiary(''); mic.resetTranscript(); }} className="rounded-lg px-2.5 py-1.5 text-sm text-slate-500 outline-none hover:bg-slate-100 hover:text-slate-800 focus-visible:ring-2 focus-visible:ring-blue-500">
                     Svuota
                   </button>
                   <span className="ml-auto pr-1 text-xs text-slate-400 tabular" title="Ctrl + Invio per analizzare">{diary.length} caratteri</span>
@@ -369,6 +398,7 @@ export default function Page() {
           )}
         </section>
       </main>
+      )}
     </div>
   );
 }

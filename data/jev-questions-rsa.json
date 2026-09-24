@@ -76,6 +76,7 @@
     "keywords": [
       "non carica",
       "accorciament*",
+      "accorciat*",
       "extraruotat*",
       "extrarotat*",
       "deformit*",
@@ -656,7 +657,8 @@
       "più spent*",
       "cambiat* rispetto a ieri",
       "peggio di ieri",
-      "insolitamente"
+      "insolitamente",
+      "rispetto a ieri"
     ],
     "threshold_yellow": 0.7,
     "threshold_red": 0.85,

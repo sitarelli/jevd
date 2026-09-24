@@ -82,7 +82,7 @@ export function mockAnalyze(diary: string): AnalysisResult {
     const s = scanKeywords(t, q.keywords);
     const n = s.hits.length;
     const neg = (q.mock as any)?.neg ?? 0.04;
-    out[q.id] = n === 0 ? (s.negated.length ? neg : 0.03) : n === 1 ? q.mock?.p1 ?? 0.8 : n === 2 ? q.mock?.p2 ?? 0.88 : q.mock?.p3 ?? 0.92;
+    out[q.id] = n === 0 ? (s.negated.length ? neg : 0.03) : n === 1 ? q.mock?.p1 ?? 0.82 : n === 2 ? q.mock?.p2 ?? 0.88 : q.mock?.p3 ?? 0.92;
   }
   out.dispnea = out.dispnea === 0.04 ? 0.03 : out.dispnea;
   const cadutaSi = (out.caduta ?? 0) >= 0.5;
@@ -90,7 +90,7 @@ export function mockAnalyze(diary: string): AnalysisResult {
   // Sospetta frattura: "non carica" + accorciamento/extrarotazione = quadro tipico
   {
     const f = scanKeywords(t, QUESTION_BY_ID.sospetta_frattura.keywords).hits.length;
-    const tipico = kw(t, 'non carica') && kw(t, 'accorciament*', 'extraruotat*', 'extrarotat*');
+    const tipico = kw(t, 'non carica') && kw(t, 'accorciament*', 'accorciat*', 'extraruotat*', 'extrarotat*');
     out.sospetta_frattura = tipico ? 0.86 : f >= 2 ? 0.62 : f === 1 ? (cadutaSi ? 0.3 : 0.15) : 0.03;
   }
   // Trauma cranico: "non ricorda" conta solo dopo una caduta, e da solo resta un dubbio
@@ -122,9 +122,11 @@ export function mockAnalyze(diary: string): AnalysisResult {
     !!p.sat && p.sat.value <= 94,
     current !== null && current >= 37.5 && !pregressa,
     pres >= 2,
+    (out.dispnea ?? 0) >= 0.5,                              // NEWS2: frequenza respiratoria / distress
+    kw(t, 'confus*', 'disorientat*', 'soporos*'),           // NEWS2: confusione nuova (ACVPU)
   ].filter(Boolean).length;
-  const detKw = (out.deterioramento_sepsi ?? 0) >= 0.5;
-  out.deterioramento_sepsi = segnali >= 4 ? 0.78 : segnali === 3 ? 0.6 : segnali === 2 || detKw ? 0.35 : 0.05;
+  const detKw = (out.deterioramento_sepsi ?? 0) >= 0.5 || kw(t, 'deterioramento', 'ipotes*');
+  out.deterioramento_sepsi = segnali >= 5 || (segnali === 4 && detKw) ? 0.84 : segnali === 4 ? 0.78 : segnali === 3 ? 0.6 : segnali === 2 || detKw ? 0.35 : 0.05;
 
   // Dolore riferito: la negazione vince, NRS 0 = nessun dolore
   if (p.doloreNegato || (p.dolore && p.dolore.value === 0)) out.dolore_riferito = 0.05;
@@ -339,7 +341,7 @@ export const ESEMPI: Esempio[] = [
     text: 'la figlia riferisce che ieri la mamma aveva febbre alta 38.5, oggi 36.8, nega febbre attuale, PA 120/70' },
   { gruppo: 'alert', id: 'delirium', n: '7', label: 'Delirium', atteso: 'Rosso: delirium 78%, proposta 4AT/CAM',
     text: 'confuso stamattina, non riconosce familiari, disorientato nel tempo e spazio, agitazione' },
-  { gruppo: 'alert', id: 'sepsi', n: '8', label: 'Early warning', atteso: 'Rosso: presincope 82%, deterioramento/sepsi 78%',
+  { gruppo: 'alert', id: 'sepsi', n: '8', label: 'Early warning', atteso: 'Rosso: deterioramento/sepsi 84%, presincope 82%',
     text: 'pallido, sudato, FC 115, PA 90/60, febbricola 37.8°C, dice sentirsi svenire, sat 92%' },
 
   { gruppo: 'trappola', id: 'trap-a', n: 'A', label: 'Seduta per terra', atteso: 'Corretto: è una caduta. Parser: non la vede (manca la parola "caduta")',

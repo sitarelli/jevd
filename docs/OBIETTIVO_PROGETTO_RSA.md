@@ -160,3 +160,55 @@ Il file `data/jev-questions-rsa.json` è la fonte unica. Per ogni domanda:
 - `scheda` e `actions` decidono cosa viene proposto.
 
 `GET /api/analyze` controlla il file (soglie, id duplicati, schema del Gateway) e riporta eventuali errori in `schemaErrors`.
+
+## 9. Diari di reparto: classifica per urgenza
+
+Il bottone **Diari di reparto** in alto apre la vista del nucleo: 20 ospiti da `data/mock-reparto-20-ospiti.json`.
+
+- **Lista a sinistra**: nome, stanza, ultimo diario (data e anteprima di 80 caratteri) e pallino di stato calcolato sull'ultimo diario del periodo (verde stabile, giallo da controllare, rosso urgente).
+- **Filtri**: ultime 24 h, 48 h, 5 giorni, tutti. Con dati demo fissi, "adesso" è l'ora dell'ultimo diario del dataset (23/09 22:10), altrimenti le finestre sarebbero vuote.
+- **Classifica a destra**: top 3 in card grandi, poi il resto in lista, con punteggio, motivo e testo del diario che ha determinato il punteggio.
+
+### Urgency score
+
+Per ogni diario: somma delle regole scattate, più 10 punti per ogni domanda sopra la sua soglia rossa e 3 per ogni domanda sopra la gialla. Ogni ospite prende il **massimo** dei suoi diari nel periodo; a parità di punti vengono prima gli ospiti in stato rosso.
+
+La formula usa gli id della prima versione del JSON; la corrispondenza con le domande v2 è in `lib/reparto.ts` (`REGOLE`):
+
+| Regola (id v1) | Domande v2 | Soglia | Punti |
+|---|---|---|---|
+| caduta_grave_frattura | sospetta_frattura | > 0,85 | 30 |
+| deterioramento_ipotensione | deterioramento_sepsi, presincope | > 0,80 | 25 |
+| rischio_ospedalizzazione | invio_ps | > 0,80 | 20 |
+| febbre | febbre_attuale | > 0,80 | 10 |
+| delirium_confusione_acuta | delirium | > 0,75 | 10 |
+| dolore | dolore_riferito, dolore_non_controllato, dolore_comportamentale | > 0,80 | 8 |
+| infezione_respiratoria_dispnea | infezione_respiratoria, dispnea | > 0,80 | 8 |
+
+Quando una regola ha più domande v2 vale la probabilità più alta. `rischio_ospedalizzazione` nella v2 non esiste più come previsione: la regola usa `invio_ps` (evento documentato).
+
+La formula non ha regole per disfagia, contenzione, lesioni o rischio suicidario: questi ospiti ricevono solo i punti per soglia rossa/gialla (10 o 3). Se volete che salgano in classifica, basta aggiungere una riga a `REGOLE`.
+
+### Modalità
+
+- **Simulazione locale** (default): tutti i diari del periodo, valutati nel browser, nessun credito consumato.
+- **Jev via Gateway**: al massimo 20 chiamate (4 in parallelo, con barra di avanzamento). Si valuta prima l'ultimo diario di ogni ospite selezionato, poi i precedenti dal più recente. I diari oltre il limite non entrano in classifica e la barra di stato lo segnala. Con 20 ospiti e il filtro "Tutti" si valuta quindi solo l'ultimo diario di ciascuno; "Ultime 24 h" (21 diari) è il filtro più vicino al limite.
+
+### Modifiche al dataset
+
+- `d024` (Elena Conti, caso 4B): nell'originale FC 115 e SpO₂ 94%. Portato a **FC 88 e SpO₂ 96%**, gli stessi vitali del 4A, perché con FC 115 anche il parser segnalava la tachicardia e la demo "stessi numeri, allarme diverso" perdeva senso. La modifica è registrata nel campo `nota_modifica` del diario.
+- Il dataset contiene 54 diari su 3 giorni (21-23 settembre), non 60 su 5: "Ultimi 5 giorni" coincide con "Tutti".
+
+## 10. Dettatura da mobile
+
+Su mobile la dettatura raddoppiava il testo. La logica anti-duplicati è in `lib/dictationMerge.ts` (funzione pura, testata con sequenze di eventi simulate) e viene usata da `lib/useDictation.ts`:
+
+- su mobile `continuous: false` e `interimResults: false`; su desktop sessione continua con anteprima;
+- si accoda solo il testo dei risultati con `isFinal === true`, ogni indice una volta sola;
+- se un risultato finale contiene il testo già ricevuto nella sessione (comportamento di Android), si accoda solo la parte nuova;
+- frasi identiche entro 800 ms vengono ignorate;
+- se il testo accodato finisce già con la stessa frase (riemissione dopo un riavvio), la frase viene scartata, confrontando parole intere, entro 5 secondi;
+- il flag `isRecording` impedisce il riavvio in `onend` dopo che l'utente ha premuto Ferma, e il doppio avvio con doppio tap;
+- `Svuota` azzera anche lo storico anti-duplicati.
+
+Limite noto: una parola uguale alla fine del testo, dettata di nuovo entro 5 secondi, viene scartata (es. "80" subito dopo "PA 120 su 80").
